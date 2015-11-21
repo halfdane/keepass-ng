@@ -6,9 +6,8 @@ var util = require('util');
 var gen_entries_view = jade.compile([
     '- each entry in entries',
     '  .entry(data-path="#{entry.title}")',
-    '    .icon',
-    '      img(src="icons/#{entry.username}.png")',
-    '    .name #{entry.title}'
+    '    span(class="icon-number-#{entry.icon}")',
+    '    span.name #{entry.title}'
 ].join('\n'));
 
 // Our type
@@ -55,11 +54,15 @@ EntryList.prototype.show = function (entries) {
     }
 
     entries = entries.map(function (entry) {
-        return {
-            title: entry.String.filter(getEntryString('Title')).pop().Value,
+        var converted = {
+            title: entry.String.filter(getEntryString
+            ('Title')).pop().Value,
             username: entry.String.filter(getEntryString('UserName')).pop().Value,
-            passwd: entry.String.filter(getEntryString('Password')).pop().Value
-        }
+            passwd: entry.String.filter(getEntryString('Password')).pop().Value,
+            icon: entry.IconID
+        };
+        console.log(converted);
+        return converted;
     });
 
     self.element.html(gen_entries_view({entries: entries}));

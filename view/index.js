@@ -11,6 +11,8 @@ var keepass = require('./view/keepass.js')('./');
 var group_tree = require('./view/group_tree.js');
 var entry_view = require('./view/entry_view.js');
 
+require('./view/sprites_css.js');
+
 var password = 'password';
 var databaseName = 'example.kdbx';
 

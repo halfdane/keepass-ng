@@ -23,7 +23,9 @@ var gen_groups_view = jade.compile([
     '  ul.nav.nav-list',
     '    each group in groups',
     '       li.group(data-UUID="#{group.UUID}")',
-    '         a.yeay #{group.Name}',
+    '         a',
+    '           span(class="icon-number-#{group.IconID}")',
+    '           span.name #{group.Name}',
     '         if group.Groups',
     '           +recurse_group(group.Groups)',
     '+recurse_group(groups)'
