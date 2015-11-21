@@ -1,0 +1,18 @@
+{
+  "name": "keepass-ng",
+  "version": "0.0.1",
+  "description": "The next generation KeePass",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron-prebuilt": "^0.35.0",
+    "jade": "*",
+    "q": "^1.4.1",
+    "underscore": "^1.8.3",
+    "fs-extra": "^0.20.1",
+    "keepass.io": "^1.1.2",
+    "crypto-js": "^3.1.5"
+  }
+}
