@@ -29,18 +29,8 @@
         return deferred.promise;
     };
 
-    var exists = function (databaseName) {
-        var filename = _databaseDirectory + databaseName;
-        console.log('Looking for ', filename);
-        return fs.existsSync(filename);
-    };
-
     var getDatabase = function (databaseName, password) {
         var deferred = q.defer();
-
-        if (!exists(databaseName)) {
-            deferred.reject("database with name '" + databaseName + "' doesn't exist");
-        }
 
         var filename = _databaseDirectory + databaseName;
         q.when(readKdbx(filename, password)).then(function (result) {
@@ -53,10 +43,6 @@
 
     var saveDatabase = function (db, databaseName) {
         var deferred = q.defer();
-
-        if (!exists(databaseName)) {
-            deferred.reject("database with name '" + databaseName + "' doesn't exist");
-        }
 
         var filename = _databaseDirectory + databaseName;
         db.saveFile(filename, function (err) {
@@ -217,8 +203,7 @@
             getDatabaseGroups: getDatabaseGroups,
             getGroupEntries: getGroupEntries,
             saveGroup: saveGroup,
-            saveGroupEntry: saveGroupEntry,
-            exists: exists
+            saveGroupEntry: saveGroupEntry
         };
     };
 })();

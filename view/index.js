@@ -11,6 +11,9 @@ var keepass = require('./view/keepass.js')('./');
 var group_tree = require('./view/group_tree.js');
 var entry_view = require('./view/entry_view.js');
 
+var password = 'password';
+var databaseName = 'example.kdbx';
+
 // append default actions to menu for OSX
 var initMenu = function () {
     try {
@@ -26,29 +29,30 @@ var initMenu = function () {
     }
 };
 
+var showEntriesOfGroup = function (entryList) {
+    "use strict";
+    return function (event) {
+        keepass.getGroupEntries(databaseName, password, event.uuid)
+                .then(function (entries) {
+                    entryList.show(entries);
+                }, function (reason) {
+                    console.log(reason)
+                });
+    };
+};
+
 $(document).ready(function () {
     initMenu();
 
-    var groups = new group_tree.Groups($('#sidebar'));
-    var entries = new entry_view.Entry($('#files'));
-
-    var password = 'password';
-    var databaseName = 'example.kdbx';
     keepass.getDatabaseGroups(databaseName, password)
             .then(function (result) {
-                groups.show(result[0].Groups);
+                var groupTree = new group_tree.GroupTree($('#sidebar'));
+                groupTree.show(result);
+
+                var entries = new entry_view.EntryList($('#files'));
+                groupTree.on('navigate', showEntriesOfGroup(entries));
             }, function (reason) {
                 console.log(reason)
             });
 
-    groups.on('navigate', function (uuid) {
-        console.log('Navigating to ', uuid);
-
-        keepass.getGroupEntries(databaseName, password, uuid)
-                .then(function (entryList) {
-                    entries.show(entryList);
-                }, function (reason) {
-                    console.log(reason)
-                });
-    });
 });

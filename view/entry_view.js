@@ -12,7 +12,7 @@ var gen_entries_view = jade.compile([
 ].join('\n'));
 
 // Our type
-function Entry(jquery_element) {
+function EntryList(jquery_element) {
     "use strict";
 
     events.EventEmitter.call(this);
@@ -36,7 +36,7 @@ function Entry(jquery_element) {
     });
 }
 
-util.inherits(Entry, events.EventEmitter);
+util.inherits(EntryList, events.EventEmitter);
 
 var getEntryString = function (expectedString) {
     return function (givenStringObject) {
@@ -45,7 +45,7 @@ var getEntryString = function (expectedString) {
     }
 };
 
-Entry.prototype.show = function (entries) {
+EntryList.prototype.show = function (entries) {
     "use strict";
 
     var self = this;
@@ -65,4 +65,4 @@ Entry.prototype.show = function (entries) {
     self.element.html(gen_entries_view({entries: entries}));
 };
 
-exports.Entry = Entry;
+exports.EntryList = EntryList;
