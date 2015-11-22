@@ -17,7 +17,7 @@
         '      th  Notes',
         '  tbody',
         '    - each entry in entries',
-        '      tr.entry(data-UUID="#{entry.uuid}")(data-password="#{entry.password._}")(data-username="#{entry.username}")',
+        '      tr.entry(data-UUID="#{entry.uuid}", data-password="#{entry.password._}", data-username="#{entry.username}")',
         '        td',
         '          span(class="icon-number-#{entry.icon}")',
         '          span #{entry.title}',

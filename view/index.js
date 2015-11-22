@@ -48,9 +48,15 @@ $(document).ready(function () {
 
     const ipcRenderer = require('electron').ipcRenderer;
     ipcRenderer.on('copy-password-of-active-entry', function () {
-        electron.clipboard.writeText(entryList.getPasswordOfActiveEntry());
+        var password = entryList.getPasswordOfActiveEntry();
+        if (!!password) {
+            electron.clipboard.writeText(password);
+        }
     });
     ipcRenderer.on('copy-username-of-active-entry', function () {
-        electron.clipboard.writeText(entryList.getUsernameOfActiveEntry());
+        var username = entryList.getUsernameOfActiveEntry();
+        if (!!username) {
+            electron.clipboard.writeText(username);
+        }
     });
 });
