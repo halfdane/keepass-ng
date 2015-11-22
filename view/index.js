@@ -46,17 +46,31 @@ $(document).ready(function () {
                 console.log(reason)
             });
 
-    const ipcRenderer = require('electron').ipcRenderer;
-    ipcRenderer.on('copy-password-of-active-entry', function () {
-        var password = entryList.getPasswordOfActiveEntry();
-        if (!!password) {
-            electron.clipboard.writeText(password);
+    $(document).on('keydown', function (event) {
+        var c = event.keyCode;
+        var ctrlDown = event.ctrlKey || event.metaKey; // Mac support
+
+        // Check for Alt+Gr (http://en.wikipedia.org/wiki/AltGr_key)
+        if (ctrlDown && event.altKey) {
+
+        } else if (ctrlDown && c == 67) {
+            var password = entryList.getPasswordOfActiveEntry();
+            if (!!password) {
+                electron.clipboard.writeText(password);
+            }
+        } else if (ctrlDown && c == 66) {
+            var username = entryList.getUsernameOfActiveEntry();
+            if (!!username) {
+                electron.clipboard.writeText(username);
+            }
         }
     });
+
+    const ipcRenderer = require('electron').ipcRenderer;
+    ipcRenderer.on('copy-password-of-active-entry', function () {
+
+    });
     ipcRenderer.on('copy-username-of-active-entry', function () {
-        var username = entryList.getUsernameOfActiveEntry();
-        if (!!username) {
-            electron.clipboard.writeText(username);
-        }
+
     });
 });
