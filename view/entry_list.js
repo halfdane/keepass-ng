@@ -17,12 +17,12 @@
         '      th  Notes',
         '  tbody',
         '    - each entry in entries',
-        '      tr.entry(data-UUID="#{entry.uuid}")',
+        '      tr.entry(data-UUID="#{entry.uuid}")(data-password="#{entry.password._}")(data-username="#{entry.username}")',
         '        td',
         '          span(class="icon-number-#{entry.icon}")',
         '          span #{entry.title}',
         '        td #{entry.username}',
-        '        td #{entry.passwd}',
+        '        td *****',
         '        td #{entry.url}',
         '        td #{entry.notes}'
     ].join('\n'));
@@ -61,31 +61,33 @@
     util.inherits(EntryList, events.EventEmitter);
 
     function convertEntry(entry) {
-        console.log("entry", entry);
-        var converted = {
+        return {
             title: getEntryValue('Title', entry),
             username: getEntryValue('UserName', entry),
-            passwd: getEntryValue('Password', entry),
+            password: getEntryValue('Password', entry),
             url: getEntryValue('URL', entry),
             notes: getEntryValue('Notes', entry),
             uuid: entry.UUID,
             icon: entry.IconID,
             tags: entry.Tags
         };
-        console.log("converted", converted);
-        return converted;
     }
-
 
     EntryList.prototype.show = function (entries) {
         var self = this;
-
         if (!entries) {
             return;
         }
-
-
         self.element.html(gen_entries_view({entries: entries.map(convertEntry)}));
+    };
+
+    EntryList.prototype.getPasswordOfActiveEntry = function () {
+        var self = this;
+        return self.element.find('.info').attr('data-password');
+    };
+    EntryList.prototype.getUsernameOfActiveEntry = function () {
+        var self = this;
+        return self.element.find('.info').attr('data-username');
     };
 
     module.exports = EntryList;

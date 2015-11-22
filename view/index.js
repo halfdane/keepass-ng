@@ -1,44 +1,30 @@
 global.$ = $;
 
 const electron = require('electron');
-const app = electron.app;  // Module to control application life.
-
-var remote = require('remote');
-var Menu = remote.require('menu');
-var shell = require('shell');
 
 var keepass = require('./view/keepass.js')('./');
-var group_tree = require('./view/group_tree.js');
+var GroupTree = require('./view/group_tree.js');
 var EntryList = require('./view/entry_list.js');
+
+var AppMenu = require('./view/menu.js');
 
 require('./view/sprites_css.js');
 
 var password = 'password';
 var databaseName = 'example.kdbx';
 
-// append default actions to menu for OSX
-var initMenu = function () {
-    try {
-        var nativeMenuBar = new Menu();
-        if (process.platform == "darwin") {
-            nativeMenuBar.createMacBuiltin && nativeMenuBar.createMacBuiltin("FileExplorer");
-        }
-    } catch (error) {
-        console.error(error);
-        setTimeout(function () {
-            throw error
-        }, 1);
-    }
-};
+var entryList;
+var groupTree;
 
 var showEntriesOfGroup = function (uuid) {
     "use strict";
 
+    console.log("Navigating to group", uuid);
+
     keepass.getGroupEntries(databaseName, password, uuid)
             .then(function (entries) {
-                var entryList = new EntryList($('#entries'));
                 entryList.show(entries);
-                entryList.on('navigate', function(uuid){
+                entryList.on('navigate', function (uuid) {
                     console.log("Navigating to entry", uuid);
                 });
             }, function (reason) {
@@ -47,15 +33,24 @@ var showEntriesOfGroup = function (uuid) {
 };
 
 $(document).ready(function () {
-    initMenu();
+    new AppMenu();
+
+    entryList = new EntryList($('#entries'));
+    groupTree = new GroupTree($('#sidebar'));
 
     keepass.getDatabaseGroups(databaseName, password)
             .then(function (result) {
-                var groupTree = new group_tree.GroupTree($('#sidebar'));
                 groupTree.show(result);
                 groupTree.on('navigate', showEntriesOfGroup);
             }, function (reason) {
                 console.log(reason)
             });
 
+    const ipcRenderer = require('electron').ipcRenderer;
+    ipcRenderer.on('copy-password-of-active-entry', function () {
+        electron.clipboard.writeText(entryList.getPasswordOfActiveEntry());
+    });
+    ipcRenderer.on('copy-username-of-active-entry', function () {
+        electron.clipboard.writeText(entryList.getUsernameOfActiveEntry());
+    });
 });

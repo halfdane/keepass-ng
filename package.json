@@ -11,6 +11,7 @@
     "jade": "*",
     "q": "^1.4.1",
     "underscore": "^1.8.3",
+    "jquery": "*",
     "fs-extra": "^0.20.1",
     "keepass.io": "^1.1.2",
     "crypto-js": "^3.1.5"
