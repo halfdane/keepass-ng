@@ -9,7 +9,7 @@ var shell = require('shell');
 
 var keepass = require('./view/keepass.js')('./');
 var group_tree = require('./view/group_tree.js');
-var entry_view = require('./view/entry_view.js');
+var EntryList = require('./view/entry_list.js');
 
 require('./view/sprites_css.js');
 
@@ -31,16 +31,19 @@ var initMenu = function () {
     }
 };
 
-var showEntriesOfGroup = function (entryList) {
+var showEntriesOfGroup = function (uuid) {
     "use strict";
-    return function (event) {
-        keepass.getGroupEntries(databaseName, password, event.uuid)
-                .then(function (entries) {
-                    entryList.show(entries);
-                }, function (reason) {
-                    console.log(reason)
+
+    keepass.getGroupEntries(databaseName, password, uuid)
+            .then(function (entries) {
+                var entryList = new EntryList($('#entries'));
+                entryList.show(entries);
+                entryList.on('navigate', function(uuid){
+                    console.log("Navigating to entry", uuid);
                 });
-    };
+            }, function (reason) {
+                console.log(reason)
+            });
 };
 
 $(document).ready(function () {
@@ -50,9 +53,7 @@ $(document).ready(function () {
             .then(function (result) {
                 var groupTree = new group_tree.GroupTree($('#sidebar'));
                 groupTree.show(result);
-
-                var entries = new entry_view.EntryList($('#files'));
-                groupTree.on('navigate', showEntriesOfGroup(entries));
+                groupTree.on('navigate', showEntriesOfGroup);
             }, function (reason) {
                 console.log(reason)
             });
