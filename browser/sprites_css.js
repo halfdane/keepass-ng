@@ -5,16 +5,18 @@
         var x = number % 9;
         var y = (number - x) / 9;
 
-        var width = 17;
+        var width = 16;
         var height = 17;
 
-        var offset_x = x * ( width -1) +1;
+        var offset_x = x * width +1;
         var offset_y = (y * height) +1 ;
 
         return '.icon-number-' + number + ' {' +
-                'background: url(\'view/clienticons.gif\') no-repeat -' + offset_x + 'px -' + offset_y + 'px;' +
-                'width: '+(width-1)+'px;' +
-                'height: '+height+'px;' +
+                'margin-bottom: -2px;' +
+                'display: inline-block;' +
+                'background: url(\'clienticons.gif\') no-repeat -' + offset_x + 'px -' + offset_y + 'px;' +
+                'width: '+width+'px;' +
+                'height: '+ (height -1)+'px;' +
                 '}';
 
     }

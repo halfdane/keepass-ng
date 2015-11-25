@@ -4,6 +4,7 @@
     var jade = require('jade');
     var events = require('events');
     var util = require('util');
+    require('./event_delegation.js');
 
     // Template engine
     var gen_entries_view = jade.compile([
@@ -36,25 +37,37 @@
         }
     };
 
-    function EntryList(jquery_element) {
+    function EntryList(dom_element) {
         events.EventEmitter.call(this);
-        this.element = jquery_element;
+        this.element = dom_element;
 
         var self = this;
         // Click on blank
-        this.element.parent().on('click', function () {
-            self.element.find('.info').removeClass('info');
+        this.element.parentNode.addEventListener('click', function () {
+
+            Array.prototype.forEach.call(
+                    self.element.getElementsByClassName('info'),
+                    function (selectedElement) {
+                        selectedElement.classList.remove('info');
+                    });
         });
-        // Click on entry
-        this.element.delegate('.entry', 'click', function (e) {
-            self.element.find('.info').removeClass('info');
-            $(this).addClass('info');
+
+        this.element.delegateEventListener("click", ".entry", function (e) {
+
+            Array.prototype.forEach.call(
+                    self.element.getElementsByClassName('info'),
+                    function (selectedElement) {
+                        selectedElement.classList.remove('info');
+                    });
+
+            this.classList.add('info');
             e.stopPropagation();
         });
-        // Double click on entry
-        this.element.delegate('.entry', 'dblclick', function () {
-            var uuid = $(this).attr('data-UUID');
+
+        this.element.delegateEventListener("dblclick", ".entry", function (e) {
+            var uuid = this.getAttribute('data-UUID');
             self.emit('navigate', uuid);
+            e.stopPropagation();
         });
     }
 
@@ -78,16 +91,16 @@
         if (!entries) {
             return;
         }
-        self.element.html(gen_entries_view({entries: entries.map(convertEntry)}));
+        self.element.innerHTML = gen_entries_view({entries: entries.map(convertEntry)});
     };
 
     EntryList.prototype.getPasswordOfActiveEntry = function () {
         var self = this;
-        return self.element.find('.info').attr('data-password');
+        return self.element.getElementsByClassName('info').item(0).getAttribute('data-password');
     };
     EntryList.prototype.getUsernameOfActiveEntry = function () {
         var self = this;
-        return self.element.find('.info').attr('data-username');
+        return self.element.getElementsByClassName('info').item(0).getAttribute('data-username');
     };
 
     module.exports = EntryList;
