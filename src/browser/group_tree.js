@@ -1,5 +1,5 @@
 (function () {
-    "use strict";
+    'use strict';
 
     var jade = require('jade');
     var events = require('events');
@@ -7,7 +7,7 @@
 
     require('./event_delegation.js');
 
-    var gen_groups_view = jade.compile([
+    var genGroupsView = jade.compile([
         'mixin recurse_group(groups)',
         '  ul.nav.nav-pills.nav-stacked',
         '    each group in groups',
@@ -21,8 +21,8 @@
         '  +recurse_group(groups)'
     ].join('\n'));
 
-    function GroupTree(dom_element) {
-        this.element = dom_element;
+    function GroupTree(domElement) {
+        this.element = domElement;
         var self = this;
 
         events.EventEmitter.call(self);
@@ -49,7 +49,7 @@
 
     GroupTree.prototype.show = function (groups) {
         var self = this;
-        self.element.innerHTML = gen_groups_view({groups: groups});
+        self.element.innerHTML = genGroupsView({groups: groups});
     };
 
     module.exports = GroupTree;

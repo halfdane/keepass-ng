@@ -11,7 +11,7 @@ const $ = gulpLoadPlugins();
 // Lint JavaScript
 gulp.task('lint', () =>
         gulp.src(['src/app/**/*.js', 'src/browser/**/*.js'])
-                .pipe($.jshint({esnext: true}))
+                .pipe($.jshint({esnext: true, node: true}))
                 .pipe($.jshint.reporter('jshint-stylish'))
                 .pipe($.jshint.reporter('fail'))
 );
@@ -30,11 +30,10 @@ gulp.task('images', () =>
 // Copy all files at the root level of browser.
 gulp.task('copy', () =>
         gulp.src([
-            'src/browser/*',
-            '!src/browser/*.html'
-        ], {
-            dot: true
-        }).pipe(gulp.dest('src/browser'))
+                    'src/browser/**/*',
+                    '!src/browser/**/*.html'
+                ], {dot: true})
+                .pipe(gulp.dest('src/browser'))
                 .pipe($.size({title: 'copy'}))
 );
 
@@ -56,18 +55,15 @@ gulp.task('styles', () => {
 });
 
 const trans = dir => {
-    return gulp.src('src/' + dir + '/*.js')
+    return gulp.src('src/' + dir + '/**/*.js')
             .pipe($.newer('.tmp/' + dir))
             .pipe($.sourcemaps.init())
-            .pipe($.babel({
-                presets: ['es2015']
-            }))
+            .pipe($.babel({presets: ['es2015']}))
             .pipe($.sourcemaps.write())
             .pipe(gulp.dest('.tmp/' + dir))
             .pipe($.uglify({preserveComments: 'some'}))
             .pipe($.sourcemaps.write('.'))
             .pipe(gulp.dest('dist/' + dir));
-
 };
 
 gulp.task('transpile-app', () => {
@@ -78,30 +74,11 @@ gulp.task('transpile-browser', () => {
     return trans('browser');
 });
 
-gulp.task('scripts', ['scripts-app', 'scripts-browser']);
-
-// Scan your HTML for assets & optimize them
 gulp.task('html', () => {
-    return gulp.src('src/browser/**/*.html')
-            .pipe($.useref({searchPath: '{.tmp,src/browser}'}))
-            // Remove any unused CSS
-            .pipe($.if('*.css', $.uncss({
-                html: [
-                    'src/browser/index.html'
-                ],
-                // CSS Selectors for UnCSS to ignore
-                ignore: []
-            })))
-
-            // Concatenate and minify styles
-            // In case you are still using useref build blocks
-            .pipe($.if('*.css', $.minifyCss()))
-
-            // Minify any HTML
-            .pipe($.if('*.html', $.minifyHtml()))
-            // Output files
-            .pipe($.if('*.html', $.size({title: 'html', showFiles: true})))
-            .pipe(gulp.dest('dist/browser'));
+    return gulp.src('src/**/*.html')
+            .pipe(gulp.dest('.tmp'))
+            .pipe(gulp.dest('dist'))
+            .pipe($.size({title: 'html', showFiles: true}));
 });
 
 gulp.task('copy', () =>
@@ -120,10 +97,6 @@ gulp.task('serve', ['default'], function () {
     electron.start();
     gulp.watch('dist/app/**', electron.restart);
     gulp.watch('dist/browser/**', electron.reload);
-});
-
-gulp.task('run', ['default'], function () {
-    return $.run('electron .').exec();
 });
 
 // Build production files, the default task

@@ -2,13 +2,13 @@
 
     /* Check various vendor-prefixed versions of Element.matches */
     function matches(selector, currentNode) {
-        var vendors = ["webkit", "ms", "moz"],
+        var vendors = ['webkit', 'ms', 'moz'],
                 count = vendors.length, vendor, i;
 
         for(i = 0; i < count; i++) {
             vendor = vendors[i];
-            if((vendor + "MatchesSelector") in currentNode) {
-                return currentNode[vendor + "MatchesSelector"](selector);
+            if((vendor + 'MatchesSelector') in currentNode) {
+                return currentNode[vendor + 'MatchesSelector'](selector);
             }
         }
     }
@@ -21,7 +21,7 @@
             if(matches(selector, currentNode)) {
                 return currentNode;
             }
-            else if(currentNode != stopAt && currentNode != document.body) {
+            else if(currentNode !== stopAt && currentNode !== document.body) {
                 currentNode = currentNode.parentNode;
             }
             else {

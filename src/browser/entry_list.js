@@ -1,5 +1,5 @@
 (function () {
-    "use strict";
+    'use strict';
 
     var jade = require('jade');
     var events = require('events');
@@ -7,7 +7,7 @@
     //require('./event_delegation.js');
 
     // Template engine
-    var gen_entries_view = jade.compile([
+    var genEntriesView = jade.compile([
         'table.table.table-hover',
         '  thead',
         '    tr',
@@ -28,9 +28,9 @@
         '        td #{entry.notes}'
     ].join('\n'));
 
-    function EntryList(dom_element) {
+    function EntryList(domElement) {
         events.EventEmitter.call(this);
-        this.element = dom_element;
+        this.element = domElement;
 
         var self = this;
         // Click on blank
@@ -43,7 +43,7 @@
                     });
         });
 
-        this.element.delegateEventListener("click", ".entry", function (e) {
+        this.element.delegateEventListener('click', '.entry', function (e) {
             Array.prototype.forEach.call(
                     self.element.getElementsByClassName('info'),
                     function (selectedElement) {
@@ -54,7 +54,7 @@
             e.stopPropagation();
         });
 
-        this.element.delegateEventListener("dblclick", ".entry", function (e) {
+        this.element.delegateEventListener('dblclick', '.entry', function (e) {
             var uuid = this.getAttribute('data-UUID');
             self.emit('navigate', uuid);
             e.stopPropagation();
@@ -68,7 +68,7 @@
         if (!entries) {
             return;
         }
-        self.element.innerHTML = gen_entries_view({entries: entries});
+        self.element.innerHTML = genEntriesView({entries: entries});
     };
 
     EntryList.prototype.getIdOfActiveEntry = function () {

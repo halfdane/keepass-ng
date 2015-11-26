@@ -1,20 +1,44 @@
-const electron = require('electron');
+import electron from 'electron';
+import BrowserWindow from 'browser-window';
+
 const app = electron.app;
-const BrowserWindow = require('browser-window');
 const globalShortcut = electron.globalShortcut;
 
-electron.crashReporter.start();
+const application = {};
 
 var mainWindow = null;
 
+/*
+var globalShortcutRegister = () => {
+    app.on('ready', () => {
+        globalShortcut.register('CmdOrCtrl+Alt+M', () => {
+            var win = new BrowserWindow({width: 800, height: 600, frame: true});
+            win.webContents.openDevTools();
+            win.loadURL('file://' + __dirname + '/search.html');
+        });
+    });
+
+    app.on('will-quit', () => {
+        globalShortcut.unregister('CmdOrCtrl+Alt+M');
+        globalShortcut.unregisterAll();
+    });
+};
+*/
+
+var createBrowserWindow = (windowOptions) => {
+    return new BrowserWindow(windowOptions);
+};
+
+electron.crashReporter.start();
+
 app.on('window-all-closed', () => {
-    if (process.platform != 'darwin') {
+    if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-app.on('ready', () => {
-    mainWindow = new BrowserWindow({width: 1024, height: 768});
+var openWindow = () => {
+    mainWindow = application.createBrowserWindow({width: 1024, height: 768});
     mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
 
     mainWindow.webContents.openDevTools();
@@ -22,19 +46,13 @@ app.on('ready', () => {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+};
 
-    globalShortcut.register('CmdOrCtrl+Alt+M', () => {
-        var win = new BrowserWindow({ width: 800, height: 600, frame: true });
-        win.webContents.openDevTools();
-        win.loadURL('file://' + __dirname + '/search.html');
-    });
-
+app.on('ready', () => {
+    application.openWindow();
 });
 
-app.on('will-quit', () => {
-    // Unregister a shortcut.
-    globalShortcut.unregister('CmdOrCtrl+Alt+M');
+application.createBrowserWindow = createBrowserWindow;
+application.openWindow = openWindow;
 
-    // Unregister all shortcuts.
-    globalShortcut.unregisterAll();
-});
+export default application;

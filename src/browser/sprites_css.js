@@ -8,13 +8,13 @@
         var width = 16;
         var height = 17;
 
-        var offset_x = x * width + 1;
-        var offset_y = (y * height) + 1;
+        var offsetX = x * width + 1;
+        var offsetY = (y * height) + 1;
 
         return '.icon-number-' + number + ' {' +
                 'margin-bottom: -2px;' +
                 'display: inline-block;' +
-                'background: url(\'images/clienticons.gif\') no-repeat -' + offset_x + 'px -' + offset_y + 'px;' +
+                'background: url(\'images/clienticons.gif\') no-repeat -' + offsetX + 'px -' + offsetY + 'px;' +
                 'width: ' + width + 'px;' +
                 'height: ' + (height - 1) + 'px;' +
                 '}';
