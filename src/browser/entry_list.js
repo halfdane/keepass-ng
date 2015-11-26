@@ -4,7 +4,7 @@
     var jade = require('jade');
     var events = require('events');
     var util = require('util');
-    require('./event_delegation.js');
+    //require('./event_delegation.js');
 
     // Template engine
     var gen_entries_view = jade.compile([

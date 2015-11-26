@@ -7,7 +7,7 @@
 
     function trigger(event) {
         return function() {
-            console.log("Triggering event: ", event)
+            console.log("Triggering event: ", event);
             document.dispatchEvent(new document.defaultView.CustomEvent(event));
         };
     }
@@ -56,7 +56,9 @@
         ];
 
         if (process.platform == 'darwin') {
-            menu.createMacBuiltin && menu.createMacBuiltin("FileExplorer");
+            if (menu.createMacBuiltin) {
+                menu.createMacBuiltin("FileExplorer");
+            }
 
             var name = require('electron').app.getName();
             template.unshift({

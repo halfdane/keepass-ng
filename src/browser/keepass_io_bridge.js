@@ -357,7 +357,7 @@
             var rawApi = db.getRawApi();
 
             console.log(rawApi.get());
-            callback("I don't get the passwords yet :P")
+            callback("I don't get the passwords yet :P");
         });
     }
 

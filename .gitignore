@@ -1,3 +1,5 @@
 .idea
 .dejavurc
 node_modules
+.tmp
+dist

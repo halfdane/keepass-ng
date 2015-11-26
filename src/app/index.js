@@ -1,19 +1,19 @@
 const electron = require('electron');
 const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const BrowserWindow = require('browser-window');
 const globalShortcut = electron.globalShortcut;
 
 electron.crashReporter.start();
 
 var mainWindow = null;
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
     if (process.platform != 'darwin') {
         app.quit();
     }
 });
 
-app.on('ready', function () {
+app.on('ready', () => {
     mainWindow = new BrowserWindow({width: 1024, height: 768});
     mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
 
@@ -23,7 +23,7 @@ app.on('ready', function () {
         mainWindow = null;
     });
 
-    globalShortcut.register('CmdOrCtrl+Alt+M', function() {
+    globalShortcut.register('CmdOrCtrl+Alt+M', () => {
         var win = new BrowserWindow({ width: 800, height: 600, frame: true });
         win.webContents.openDevTools();
         win.loadURL('file://' + __dirname + '/search.html');
@@ -31,7 +31,7 @@ app.on('ready', function () {
 
 });
 
-app.on('will-quit', function() {
+app.on('will-quit', () => {
     // Unregister a shortcut.
     globalShortcut.unregister('CmdOrCtrl+Alt+M');
 

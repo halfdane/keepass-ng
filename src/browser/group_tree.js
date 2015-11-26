@@ -32,7 +32,7 @@
             Array.prototype.forEach.call(
                     self.element.getElementsByClassName('active'),
                     function (active) {
-                        active.classList.remove('active')
+                        active.classList.remove('active');
                     });
 
             this.classList.add('active');
