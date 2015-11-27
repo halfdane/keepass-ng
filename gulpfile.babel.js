@@ -3,18 +3,21 @@ import del from 'del';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import runSequence from 'run-sequence';
 
+var browserify = require('browserify');         //
+var babelify = require('babelify');
+
+
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+
+var source = require('vinyl-source-stream')
+var buffer = require('vinyl-buffer')
+
+
+
 import electron_connect from 'electron-connect';
 const electron = electron_connect.server.create();
 
 const $ = gulpLoadPlugins();
-
-// Lint JavaScript
-gulp.task('lint', () =>
-        gulp.src(['src/app/**/*.js', 'src/browser/**/*.js'])
-                .pipe($.jshint({esnext: true, node: true}))
-                .pipe($.jshint.reporter('jshint-stylish'))
-                .pipe($.jshint.reporter('fail'))
-);
 
 // Optimize images
 gulp.task('images', () =>
@@ -25,16 +28,6 @@ gulp.task('images', () =>
                 })))
                 .pipe(gulp.dest('dist/browser/images'))
                 .pipe($.size({title: 'images'}))
-);
-
-// Copy all files at the root level of browser.
-gulp.task('copy', () =>
-        gulp.src([
-                    'src/browser/**/*',
-                    '!src/browser/**/*.html'
-                ], {dot: true})
-                .pipe(gulp.dest('src/browser'))
-                .pipe($.size({title: 'copy'}))
 );
 
 gulp.task('styles', () => {
@@ -54,24 +47,31 @@ gulp.task('styles', () => {
             .pipe(gulp.dest('dist/browser/styles'));
 });
 
-const trans = dir => {
-    return gulp.src('src/' + dir + '/**/*.js')
-            .pipe($.newer('.tmp/' + dir))
+gulp.task('transpile-production', () => {
+    return gulp.src(['src/**/*.js', '!src/spec'])
+            .pipe($.newer('.tmp/'))
             .pipe($.sourcemaps.init())
             .pipe($.babel({presets: ['es2015']}))
             .pipe($.sourcemaps.write())
-            .pipe(gulp.dest('.tmp/' + dir))
+            .pipe(gulp.dest('.tmp/'))
             .pipe($.uglify({preserveComments: 'some'}))
             .pipe($.sourcemaps.write('.'))
-            .pipe(gulp.dest('dist/' + dir));
-};
-
-gulp.task('transpile-app', () => {
-    return trans('app');
+            .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('transpile-browser', () => {
-    return trans('browser');
+gulp.task('transpile-test', () => {
+    browserify('src/spec/test.js', { debug: true })
+            .transform(babelify, {/* options */ })
+            .bundle()
+            .pipe(source('test.js'))
+            .pipe(buffer())
+            .pipe(gulp.dest('.tmp/spec'))
+});
+
+gulp.task('test', ['transpile-test', 'html'], function () {
+    return gulp
+            .src('.tmp/spec/index.html')
+            .pipe(mochaPhantomJS());
 });
 
 gulp.task('html', () => {
@@ -81,14 +81,31 @@ gulp.task('html', () => {
             .pipe($.size({title: 'html', showFiles: true}));
 });
 
+
+// Copy all remaining files at the root level of browser.
 gulp.task('copy', () =>
         gulp.src([
-            'app/*',
-            '!app/*.html'
-        ], {
-            dot: true
-        }).pipe(gulp.dest('dist'))
+                    'src/**/*',
+                    '!src/**/*.js',
+                    '!src/**/*.html',
+                    '!src/**/*.css',
+                    '!src/**/images/*'
+                ], {dot: true})
+                .pipe(gulp.dest('.tmp/browser'))
+                .pipe(gulp.dest('dist/browser'))
+                .pipe($.size({title: 'copy'}))
 );
+
+
+// Lint JavaScript
+gulp.task('lint', () =>
+        gulp.src(['src/app/**/*.js', 'src/browser/**/*.js'])
+                .pipe($.jshint({esnext: true, node: true}))
+                .pipe($.jshint.reporter('jshint-stylish'))
+                .pipe($.jshint.reporter('fail'))
+);
+
+
 
 // Clean output directory
 gulp.task('clean', cb => del(['.tmp', 'dist'], {dot: true}));
@@ -103,7 +120,7 @@ gulp.task('serve', ['default'], function () {
 gulp.task('default', cb =>
         runSequence(
                 'styles',
-                ['lint', 'html', 'transpile-app', 'transpile-browser', 'images', 'copy'],
+                ['lint', 'html', 'transpile-production', 'images', 'copy'],
                 cb
         )
 );

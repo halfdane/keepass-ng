@@ -1,19 +1,67 @@
 import EntryList from '../browser/entry_list';
 
-describe('app test', () => {
+describe('dom', () => {
+    it('should exist', () => {
+        expect( document ).to.exist;
+    });
+    it('its body should exist', () => {
+        expect( document.body ).to.exist;
+    });
+    it('should be able to append to and remove from body', () => {
+        var fixture = '<div id="fixture"><div id="testElement"></div></div>';
 
-    // inject the HTML fixture for the tests
+        expect(document.getElementById('fixture')).not.to.exist;
+
+        document.body.insertAdjacentHTML('afterbegin', fixture);
+        expect(document.getElementById('fixture')).to.exist;
+
+        document.body.removeChild(document.getElementById('fixture'));
+        expect(document.getElementById('fixture')).not.to.exist;
+    });
+});
+
+
+describe('fixture', () => {
+
     beforeEach(function() {
-        var fixture = '<div id="testElement"></div>';
+        var fixture = '<div id="fixture"><div id="testElement"></div></div>';
         document.body.insertAdjacentHTML('afterbegin', fixture);
     });
 
-    // remove the html fixture from the DOM
     afterEach(function() {
         document.body.removeChild(document.getElementById('fixture'));
     });
 
-    it('should load correct url', () => {
+    it('should exist', () => {
+        expect(document.getElementById('fixture')).to.exist;
+    });
+
+    it('test element should exist', () => {
+        expect(document.getElementById('testElement')).to.exist;
+    });
+});
+
+describe('EntryList', () => {
+
+    beforeEach(function() {
+        var fixture = '<div id="fixture"><div id="testElement"></div></div>';
+        document.body.insertAdjacentHTML('afterbegin', fixture);
+    });
+
+    afterEach(function() {
+        document.body.removeChild(document.getElementById('fixture'));
+    });
+
+    it('should exist', () => {
+        expect(EntryList).to.exist;
+    });
+
+    it('should be instantiated', () => {
+        var entryList = new EntryList(document.getElementById('testElement'));
+        expect(entryList).to.exist;
+    });
+
+    it('should display entry-value', () => {
         var entryList = new EntryList(document.getElementById('testElement'));
         entryList.show([
             {
@@ -28,7 +76,13 @@ describe('app test', () => {
             }
         ]);
 
-        // then
-        expect(document.getElementById('testElement')).toContain('username1');
+        var generatedHtml = document.getElementById('testElement').innerHTML;
+        expect( generatedHtml ).to.match( /t1/ );
+        expect( generatedHtml ).to.match( /username1/ );
+        expect( generatedHtml ).not.to.match( /passwd1/ );
+        expect( generatedHtml ).to.match( /url1/ );
+        expect( generatedHtml ).to.match( /notes1/ );
+        expect( generatedHtml ).to.match( /uuid1/ );
+        expect( generatedHtml ).to.match( /iconid1/ );
     });
 });
