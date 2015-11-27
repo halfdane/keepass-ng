@@ -61,7 +61,7 @@ describe('EntryList', () => {
         expect(entryList).to.exist;
     });
 
-    it('should display entry-value', () => {
+    it('should display one entry-value', () => {
         var entryList = new EntryList(document.getElementById('testElement'));
         entryList.show([
             {
@@ -77,12 +77,12 @@ describe('EntryList', () => {
         ]);
 
         var generatedHtml = document.getElementById('testElement').innerHTML;
-        expect( generatedHtml ).to.match( /t1/ );
-        expect( generatedHtml ).to.match( /username1/ );
-        expect( generatedHtml ).not.to.match( /passwd1/ );
-        expect( generatedHtml ).to.match( /url1/ );
-        expect( generatedHtml ).to.match( /notes1/ );
-        expect( generatedHtml ).to.match( /uuid1/ );
-        expect( generatedHtml ).to.match( /iconid1/ );
+        expect( generatedHtml ).to.have.string( 't1' );
+        expect( generatedHtml ).to.have.string( 'username1' );
+        expect( generatedHtml ).not.to.have.string( 'passwd1' );
+        expect( generatedHtml ).to.have.string( 'url1' );
+        expect( generatedHtml ).to.have.string( 'notes1' );
+        expect( generatedHtml ).to.have.string( 'uuid1' );
+        expect( generatedHtml ).to.have.string( 'iconid1' );
     });
 });

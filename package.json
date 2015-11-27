@@ -22,12 +22,17 @@
     "chai": "^3.4.1",
     "del": "^2.0.2",
     "electron-connect": "^0.3.3",
+    "es": "^0.4.8",
+    "glob": "^6.0.1",
     "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "gulp-browserify": "^0.5.1",
     "gulp-cache": "0.2.2",
     "gulp-if": "^2.0.0",
     "gulp-imagemin": "^2.0.0",
     "gulp-jshint": "~1.11.0",
     "gulp-load-plugins": "^1.0.0",
+    "gulp-minify-css": "^1.2.1",
     "gulp-minify-css5": "^1.1.6",
     "gulp-minify-html": "^1.0.4",
     "gulp-mocha-phantomjs": "^0.10.1",
@@ -41,10 +46,13 @@
     "gulp-uncss": "^1.0.0",
     "gulp-useref": "^3.0.0",
     "jshint-stylish": "~2.0.1",
+    "rename": "^1.0.3",
     "run-sequence": "^1.0.1",
     "should": "^7.1.1",
+    "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0"
   },
   "engines": {
     "node": ">=0.10.0"

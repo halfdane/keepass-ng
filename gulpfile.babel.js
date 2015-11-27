@@ -3,16 +3,15 @@ import del from 'del';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import runSequence from 'run-sequence';
 
-var browserify = require('browserify');         //
-var babelify = require('babelify');
+var browserify = require('browserify');
+var babel = require('babelify');
 
+var transform = require('vinyl-transform');
 
 var mochaPhantomJS = require('gulp-mocha-phantomjs');
 
-var source = require('vinyl-source-stream')
-var buffer = require('vinyl-buffer')
-
-
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 import electron_connect from 'electron-connect';
 const electron = electron_connect.server.create();
@@ -59,18 +58,24 @@ gulp.task('transpile-production', () => {
             .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('transpile-test', () => {
-    browserify('src/spec/test.js', { debug: true })
-            .transform(babelify, {/* options */ })
-            .bundle()
-            .pipe(source('test.js'))
-            .pipe(buffer())
-            .pipe(gulp.dest('.tmp/spec'))
+gulp.task('clean-test', () => {
+    del('.tmp/spec', {dot: true})
 });
 
-gulp.task('test', ['transpile-test', 'html'], function () {
-    return gulp
-            .src('.tmp/spec/index.html')
+gulp.task('transpile-test', ['clean-test'], () => {
+    var bundler = browserify('./src/spec/test.js', { debug: true })
+            .transform(babel);
+
+    return bundler.bundle()
+            .on('error', function(err) { console.error(err); this.emit('end'); })
+            .pipe(source('test.js'))
+            .pipe(buffer())
+            .pipe(gulp.dest('.tmp/spec'));
+});
+
+gulp.task('test', ['transpile-test'], () => {
+    return gulp.src('src/spec/**/*.html')
+            .pipe(gulp.dest('.tmp/spec'))
             .pipe(mochaPhantomJS());
 });
 
@@ -80,7 +85,6 @@ gulp.task('html', () => {
             .pipe(gulp.dest('dist'))
             .pipe($.size({title: 'html', showFiles: true}));
 });
-
 
 // Copy all remaining files at the root level of browser.
 gulp.task('copy', () =>
@@ -96,7 +100,6 @@ gulp.task('copy', () =>
                 .pipe($.size({title: 'copy'}))
 );
 
-
 // Lint JavaScript
 gulp.task('lint', () =>
         gulp.src(['src/app/**/*.js', 'src/browser/**/*.js'])
@@ -105,10 +108,8 @@ gulp.task('lint', () =>
                 .pipe($.jshint.reporter('fail'))
 );
 
-
-
 // Clean output directory
-gulp.task('clean', cb => del(['.tmp', 'dist'], {dot: true}));
+gulp.task('clean', () => del(['.tmp', 'dist'], {dot: true}));
 
 gulp.task('serve', ['default'], function () {
     electron.start();
@@ -120,7 +121,7 @@ gulp.task('serve', ['default'], function () {
 gulp.task('default', cb =>
         runSequence(
                 'styles',
-                ['lint', 'html', 'transpile-production', 'images', 'copy'],
+                ['html', 'transpile-production', 'images', 'copy'],
                 cb
         )
 );
