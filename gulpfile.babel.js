@@ -73,7 +73,7 @@ gulp.task('transpile-test', ['clean-test'], () => {
             .pipe(gulp.dest('.tmp/spec'));
 });
 
-gulp.task('test', ['transpile-test'], () => {
+gulp.task('test', ['transpile-test', 'transpile-production'], () => {
     return gulp.src('src/spec/**/*.html')
             .pipe(gulp.dest('.tmp/spec'))
             .pipe(mochaPhantomJS());
@@ -120,6 +120,7 @@ gulp.task('serve', ['default'], function () {
 // Build production files, the default task
 gulp.task('default', cb =>
         runSequence(
+                'clean',
                 'styles',
                 ['html', 'transpile-production', 'images', 'copy'],
                 cb

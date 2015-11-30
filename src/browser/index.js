@@ -2,7 +2,7 @@ const electron = require('electron');
 
 var keepassBridge = require('./keepass_io_bridge.js');
 var GroupTree = require('./group_tree.js');
-var EntryList = require('./entry_list.js');
+import EntryList from './entry_list.js';
 
 var AppMenu = require('./menu.js');
 

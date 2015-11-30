@@ -43,4 +43,13 @@
         });
     };
 
+    Event.prototype.parent = function (toFind, callback) {
+        var found = passedThrough(this, toFind, this.currentTarget);
+
+        if(found) {
+            callback(found);
+        }
+        return this;
+    }
+
 }(window.document, window.EventTarget || window.Element));
