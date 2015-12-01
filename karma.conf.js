@@ -22,8 +22,7 @@ module.exports = function (config) {
             ]
         },
 
-        logLevel: 'LOG_INFO',
         colors: true,
-        reporters: ['mocha', 'coverage']
+        reporters: ['mocha']
     });
 };

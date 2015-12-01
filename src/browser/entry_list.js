@@ -1,6 +1,4 @@
-/*jshint esnext: true */
 import events from 'events';
-import util from 'util';
 import './event_delegation.js';
 
 var Mark = require('markup-js');

@@ -1,21 +1,16 @@
 {
-  /*
   "esnext": true,
-  "camelcase": true,
+  "expr" : true,
   "curly": true,
   "eqeqeq": true,
-  "expr" : true,
   "forin": true,
-  "immed": true,
   "indent": 2,
   "latedef": "nofunc",
-  "newcap": false,
   "noarg": true,
   "node": true,
   "quotmark": "single",
   "undef": true,
   "unused": "vars",
-  "trailing": true,
   "globals": {
     "after"      : false,
     "afterEach"  : false,
@@ -23,7 +18,14 @@
     "beforeEach" : false,
     "context"    : false,
     "describe"   : false,
+    "document"   : false,
+    "expect"     : false,
     "it"         : false,
-    "window"     : false
-  }*/
+    "window"     : false,
+    "sinon"     : false
+  },
+  "trailing": true,
+  "newcap": false,
+  "immed": true,
+  "camelcase": true
 }

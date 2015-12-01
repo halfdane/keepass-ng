@@ -2,13 +2,13 @@ import electron from 'electron';
 import BrowserWindow from 'browser-window';
 
 const app = electron.app;
-const globalShortcut = electron.globalShortcut;
 
 const application = {};
 
 var mainWindow = null;
 
 /*
+const globalShortcut = electron.globalShortcut;
 var globalShortcutRegister = () => {
     app.on('ready', () => {
         globalShortcut.register('CmdOrCtrl+Alt+M', () => {

@@ -1,6 +1,6 @@
 function createMouseEvent(eventName) {
-    if (!HTMLElement.prototype[eventName]) {
-        HTMLElement.prototype[eventName] = function () {
+    if (!window.HTMLElement.prototype[eventName]) {
+        window.HTMLElement.prototype[eventName] = function () {
             var ev = document.createEvent('MouseEvent');
             ev.initMouseEvent(
                     eventName,
@@ -11,7 +11,7 @@ function createMouseEvent(eventName) {
                     0/*button=left*/, null
             );
             this.dispatchEvent(ev);
-        }
+        };
     }
 }
 

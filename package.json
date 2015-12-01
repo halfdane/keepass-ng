@@ -7,11 +7,8 @@
     "start": "electron .",
     "prepublish": "npm run build",
     "build": "gulp",
-    "hint": "jshint src/browser/*.js",
-    "test": "karma start"
-  },
-  "jshintConfig": {
-    "esnext": true
+    "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
+    "test": "npm run hint && karma start"
   },
   "dependencies": {
     "crypto-js": "^3.1.5",
@@ -56,7 +53,9 @@
     "gulp-uncss": "^1.0.0",
     "gulp-useref": "^3.0.0",
     "istanbul-instrumenter-loader": "^0.1.3",
-    "jshint-stylish": "~2.0.1",
+    "jscs": "^2.6.0",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.1.0",
     "karma": "^0.13.15",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-browserify": "^4.4.1",

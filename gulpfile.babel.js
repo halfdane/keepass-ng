@@ -79,14 +79,6 @@ gulp.task('copy', () =>
                 .pipe($.size({title: 'copy'}))
 );
 
-// Lint JavaScript
-gulp.task('lint', () =>
-        gulp.src(['src/app/**/*.js', 'src/browser/**/*.js'])
-                .pipe($.jshint({esnext: true, node: true}))
-                .pipe($.jshint.reporter('jshint-stylish'))
-                .pipe($.jshint.reporter('fail'))
-);
-
 // Clean output directory
 gulp.task('clean', () => del(['.tmp', 'dist'], {dot: true}));
 

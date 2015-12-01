@@ -43,7 +43,7 @@
         });
     };
 
-    Event.prototype.parent = function (toFind, callback) {
+    window.Event.prototype.parent = function (toFind, callback) {
         var found = passedThrough(this, toFind, this.currentTarget);
 
         if(found) {

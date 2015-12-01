@@ -362,7 +362,9 @@
     }
 
     function matchEntries(dbpath, password, userinput, callback) {
-        callback('nothing here');
+        if (rawDb) {
+            callback('nothing here');
+        }
     }
 
     module.exports = {

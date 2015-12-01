@@ -1,13 +1,10 @@
 (function () {
-    "use strict";
-
     var remote = require('remote');
     var Menu = remote.require('menu');
-    var shell = require('shell');
 
     function trigger(event) {
         return function() {
-            console.log("Triggering event: ", event);
+            console.log('Triggering event: ', event);
             document.dispatchEvent(new document.defaultView.CustomEvent(event));
         };
     }
@@ -18,9 +15,9 @@
         // Check for Alt+Gr (http://en.wikipedia.org/wiki/AltGr_key)
         if (ctrlDown && event.altKey) {
 
-        } else if (ctrlDown && event.keyCode == 67) {
+        } else if (ctrlDown && event.keyCode === 67) {
             trigger('copy-password-of-active-entry')();
-        } else if (ctrlDown && event.keyCode == 66) {
+        } else if (ctrlDown && event.keyCode === 66) {
             trigger('copy-username-of-active-entry')();
         }
     });
@@ -55,9 +52,9 @@
             },
         ];
 
-        if (process.platform == 'darwin') {
+        if (process.platform === 'darwin') {
             if (menu.createMacBuiltin) {
-                menu.createMacBuiltin("FileExplorer");
+                menu.createMacBuiltin('FileExplorer');
             }
 
             var name = require('electron').app.getName();
@@ -100,7 +97,7 @@
                         label: 'Quit',
                         accelerator: 'Command+Q',
                         click: function () {
-                            app.quit();
+                            require('electron').app.quit();
                         }
                     },
                 ]
