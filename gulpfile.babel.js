@@ -58,27 +58,6 @@ gulp.task('transpile-production', () => {
             .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('clean-test', () => {
-    del('.tmp/spec', {dot: true})
-});
-
-gulp.task('transpile-test', ['clean-test'], () => {
-    var bundler = browserify('./src/spec/test.js', { debug: true })
-            .transform(babel);
-
-    return bundler.bundle()
-            .on('error', function(err) { console.error(err); this.emit('end'); })
-            .pipe(source('test.js'))
-            .pipe(buffer())
-            .pipe(gulp.dest('.tmp/spec'));
-});
-
-gulp.task('test', ['transpile-test', 'transpile-production'], () => {
-    return gulp.src('src/spec/**/*.html')
-            .pipe(gulp.dest('.tmp/spec'))
-            .pipe(mochaPhantomJS());
-});
-
 gulp.task('html', () => {
     return gulp.src('src/**/*.html')
             .pipe(gulp.dest('.tmp'))

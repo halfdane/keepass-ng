@@ -1,7 +1,9 @@
-import jade from 'jade';
+/*jshint esnext: true */
 import events from 'events';
 import util from 'util';
-import {each} from './event_delegation.js';
+import './event_delegation.js';
+
+var Mark = require('markup-js');
 
 export default class EntryList extends events.EventEmitter {
 
@@ -10,27 +12,32 @@ export default class EntryList extends events.EventEmitter {
         this.element = domElement;
         this.setupEvents();
 
-        this.genEntriesView = jade.compile([
-            'table.table.table-hover',
-            '  thead',
-            '    tr',
-            '      th Title',
-            '      th  Username',
-            '      th  Password',
-            '      th  Url',
-            '      th  Notes',
-            '  tbody',
-            '    - each entry in entries',
-            '      tr.entry(data-UUID="#{entry.uuid}", data-username="#{entry.username}")',
-            '        td',
-            '          span(class="icon-number-#{entry.icon}")',
-            '          span #{entry.title}',
-            '        td #{entry.username}',
-            '        td *****',
-            '        td #{entry.url}',
-            '        td #{entry.notes}'
-        ].join('\n'));
-
+        this.template = `
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{entries}}
+                <tr class="entry" data-UUID="{{uuid}}" data-username="{{username}">
+                    <td>
+                        <span class="icon-number-{{icon}}"></span>
+                        <span>{{title}}</span>
+                    </td>
+                    <td>{{username}}</td>
+                    <td>****</td>
+                    <td>{{url}}</td>
+                    <td>{{notes}}</td>
+                </tr>
+            {{/entries}}
+            </tbody>
+        </table>
+        `;
     }
 
     setupEvents() {
@@ -61,7 +68,7 @@ export default class EntryList extends events.EventEmitter {
             return;
         }
 
-        self.element.innerHTML = this.genEntriesView({entries: entries});
+        self.element.innerHTML = Mark.up(this.template, {entries: entries});
     }
 
     getIdOfActiveEntry() {

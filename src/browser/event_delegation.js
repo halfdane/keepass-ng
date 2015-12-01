@@ -50,6 +50,6 @@
             callback(found);
         }
         return this;
-    }
+    };
 
 }(window.document, window.EventTarget || window.Element));
