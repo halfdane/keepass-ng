@@ -1,57 +1,46 @@
-(function () {
-    'use strict';
+import events from 'events';
+import './event_delegation.js';
 
-    var jade = require('jade');
-    var events = require('events');
-    var util = require('util');
+var Mark = require('markup-js');
 
-    require('./event_delegation.js');
+export default class GroupTree extends events.EventEmitter {
 
-    var genGroupsView = jade.compile([
-        'mixin recurse_group(groups)',
-        '  ul.nav.nav-pills.nav-stacked',
-        '    each group in groups',
-        '       li.group(data-UUID="#{group.UUID}")',
-        '         a',
-        '           span(class="icon-number-#{group.IconID}")',
-        '           span.name #{group.Name}',
-        '         if group.Groups',
-        '           +recurse_group(group.Groups)',
-        'nav',
-        '  +recurse_group(groups)'
-    ].join('\n'));
-
-    function GroupTree(domElement) {
+    constructor(domElement) {
+        super();
         this.element = domElement;
-        var self = this;
+        this.setupEvents();
 
-        events.EventEmitter.call(self);
-
-        this.element.delegateEventListener('click', '.group', function (e) {
-
-            Array.prototype.forEach.call(
-                    self.element.getElementsByClassName('active'),
-                    function (active) {
-                        active.classList.remove('active');
-                    });
-
-            this.classList.add('active');
-
-            var uuid = this.getAttribute('data-UUID');
-            self.emit('navigate', uuid);
-
-            e.stopPropagation();
-        });
-
+        Mark.includes.groupTree = `
+        <ul class="nav nav-pills nav-stacked">
+        {{Groups}}
+            <li class="group" data-UUID="{{UUID}}">
+                <a>
+                    <span class="icon-number-{{IconID}}"></span>
+                    <span>{{Name}}</span>
+                </a>
+                {{if Groups}}
+                    {{groupTree}}
+                {{/if}}
+            </li>
+        {{/Groups}}
+        </ul>
+        `;
     }
 
-    util.inherits(GroupTree, events.EventEmitter);
+    setupEvents() {
+        this.element.addEventListener('click', event => {
+            event.parent('.group',
+                    e => this.emit('navigate', e.getAttribute('data-UUID')));
+            event.stopPropagation();
+        });
+    }
 
-    GroupTree.prototype.show = function (groups) {
+    show(groups) {
         var self = this;
-        self.element.innerHTML = genGroupsView({groups: groups});
-    };
+        if (!groups) {
+            return;
+        }
 
-    module.exports = GroupTree;
-
-})();
+        self.element.innerHTML = Mark.up('{{groupTree}}', {Groups: groups});
+    }
+}

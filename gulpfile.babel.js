@@ -29,17 +29,10 @@ gulp.task('images', () =>
 gulp.task('styles', () => {
     // For best performance, don't add Sass partials to `gulp.src`
     return gulp.src([
-                'src/browser/styles/**/*.scss',
                 'src/browser/styles/**/*.css'
             ])
             .pipe($.newer('.tmp/browser/styles'))
-            .pipe($.sourcemaps.init())
-            .pipe($.sass({
-                precision: 10
-            }).on('error', $.sass.logError))
             .pipe(gulp.dest('.tmp/browser/styles'))
-            .pipe($.if('*.css', $.minifyCss()))
-            .pipe($.sourcemaps.write('./'))
             .pipe(gulp.dest('dist/browser/styles'));
 });
 
