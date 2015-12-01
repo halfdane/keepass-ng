@@ -4,11 +4,8 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import runSequence from 'run-sequence';
 
 var browserify = require('browserify');
-var babel = require('babelify');
 
 var transform = require('vinyl-transform');
-
-var mochaPhantomJS = require('gulp-mocha-phantomjs');
 
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');

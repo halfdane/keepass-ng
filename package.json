@@ -7,8 +7,13 @@
     "start": "electron .",
     "prepublish": "npm run build",
     "build": "gulp",
+    "build:watch": "watch 'npm run build' src/app src/browser",
     "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
-    "test": "npm run hint && karma start"
+    "pretest": "npm run hint -s",
+    "test:watch": "watch 'npm test' src/",
+    "test": "karma start",
+    "build_and_test": "npm run build && npm run test",
+    "watch": "watch 'npm run build_and_test' src/"
   },
   "dependencies": {
     "crypto-js": "^3.1.5",
@@ -73,7 +78,7 @@
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webpack": "^1.7.0",
     "mocha": "^2.3.4",
-    "mochify": "^2.14.2",
+    "parallelshell": "^2.0.0",
     "rename": "^1.0.3",
     "run-sequence": "^1.0.1",
     "should": "^7.1.1",
@@ -83,7 +88,7 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "vinyl-transform": "^1.0.0",
-    "webpack": "^1.12.9"
+    "watch": "^0.16.0"
   },
   "engines": {
     "node": ">=0.10.0"
