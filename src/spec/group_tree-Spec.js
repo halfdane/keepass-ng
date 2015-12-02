@@ -137,7 +137,7 @@ describe('GroupTree', () => {
             document.body.removeChild(document.getElementById('fixture'));
         });
 
-        xit('should activate clicked group', ()=> {
+        it('should activate clicked group', ()=> {
             new GroupTree(document.getElementById('testElement'));
             var inactiveGroup = document.getElementById('group1');
 
@@ -146,57 +146,16 @@ describe('GroupTree', () => {
             expect(inactiveGroup).to.have.class('active');
         });
 
-        xit('should deactivate entry when clicking somewhere else', ()=> {
-            new GroupTree(document.getElementById('testElement'));
-            var activeEntry = document.getElementById('entry2');
-            expect(activeEntry).to.have.class('info');
+        it('should trigger navigation event when double clicking on group', ()=> {
+            var eventSpy = sinon.spy();
+            var groupTree = new GroupTree(document.getElementById('testElement'));
+            groupTree.on('navigate', eventSpy);
 
             // when
-            document.getElementById('testElement').click();
-            expect(activeEntry).not.to.have.class('info');
+            document.getElementById('group1').click();
+            expect(eventSpy).to.have.been.calledWith('someUuid');
+            expect(eventSpy).to.have.been.calledOnce;
         });
 
     });
-
-    describe('information retrieval', () => {
-        beforeEach(function () {
-            var fixture = `<div id="fixture">
-            <div id="testElement">
-                        <div id="entry1" class="entry info"
-                        data-UUID="someUuid"
-                        data-username="someUsername"
-                        ></div>
-            </div></div>`;
-            document.body.insertAdjacentHTML('afterbegin', fixture);
-        });
-
-        afterEach(function () {
-            document.body.removeChild(document.getElementById('fixture'));
-        });
-
-        xit('should return id of active entry', ()=> {
-            var groupTree = new GroupTree(document.getElementById('testElement'));
-            var myEntry = document.getElementById('entry1');
-            expect(myEntry.classList.contains('info')).to.be.true;
-
-            // when
-            var idOfActiveEntry = groupTree.getIdOfActiveEntry();
-
-            // then
-            expect(idOfActiveEntry).to.equal('someUuid');
-        });
-
-        xit('should return username of active entry', ()=> {
-            var groupTree = new GroupTree(document.getElementById('testElement'));
-            var myEntry = document.getElementById('entry1');
-            expect(myEntry.classList.contains('info')).to.be.true;
-
-            // when
-            var usernameOfActiveEntry = groupTree.getUsernameOfActiveEntry();
-
-            // then
-            expect(usernameOfActiveEntry).to.equal('someUserne');
-        });
-    });
-
 });

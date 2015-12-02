@@ -29,6 +29,10 @@ export default class GroupTree extends events.EventEmitter {
 
     setupEvents() {
         this.element.addEventListener('click', event => {
+            [].forEach.call(this.element.getElementsByClassName('active'),
+                    el => el.classList.remove('active'));
+            event.parent('.group', p => p.classList.add('active'));
+
             event.parent('.group',
                     e => this.emit('navigate', e.getAttribute('data-UUID')));
             event.stopPropagation();
