@@ -22,7 +22,7 @@ export default class EntryList extends events.EventEmitter {
             </thead>
             <tbody>
             {{entries}}
-                <tr class="entry" data-UUID="{{uuid}}" data-username="{{username}">
+                <tr class="entry" data-UUID="{{uuid}}" data-username="{{username}}">
                     <td>
                         <span class="icon-number-{{icon}}"></span>
                         <span>{{title}}</span>
