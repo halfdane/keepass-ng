@@ -3,6 +3,7 @@ import './event_delegation.js';
 
 var Mark = require('markup-js');
 
+const SELECTED = 'active';
 export default class EntryList extends events.EventEmitter {
 
     constructor(domElement) {
@@ -11,12 +12,13 @@ export default class EntryList extends events.EventEmitter {
         this.setupEvents();
 
         this.template = `
-        <table class="table table-hover">
+        <table class="table-striped">
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>URL</th>
                     <th>Notes</th>
                 </tr>
             </thead>
@@ -41,15 +43,15 @@ export default class EntryList extends events.EventEmitter {
     setupEvents() {
         // Click on blank
         this.element.parentNode.addEventListener('click', () => {
-            [].forEach.call(this.element.getElementsByClassName('info'),
-                    el => el.classList.remove('info'));
+            [].forEach.call(this.element.getElementsByClassName(SELECTED),
+                    el => el.classList.remove(SELECTED));
         });
 
         this.element.addEventListener('click', e => {
-            [].forEach.call(this.element.getElementsByClassName('info'),
-                    el => el.classList.remove('info'));
+            [].forEach.call(this.element.getElementsByClassName(SELECTED),
+                    el => el.classList.remove(SELECTED));
 
-            e.parent('.entry', p => p.classList.add('info'));
+            e.parent('.entry', p => p.classList.add(SELECTED));
             e.stopPropagation();
         });
 
@@ -71,12 +73,12 @@ export default class EntryList extends events.EventEmitter {
 
     getIdOfActiveEntry() {
         var self = this;
-        return self.element.getElementsByClassName('info').item(0).getAttribute('data-UUID');
+        return self.element.getElementsByClassName(SELECTED).item(0).getAttribute('data-UUID');
     }
 
     getUsernameOfActiveEntry() {
         var self = this;
-        return self.element.getElementsByClassName('info').item(0).getAttribute('data-username');
+        return self.element.getElementsByClassName(SELECTED).item(0).getAttribute('data-username');
     }
 }
 

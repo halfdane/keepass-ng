@@ -1,11 +1,16 @@
-nav ul ul {
-    margin-left: 10%;
+.nav {
+    padding-left: 0;
 }
 
-#sidebar {
-    float: left;
+.nav li {
+    padding-left: 10%;
 }
 
-#entries {
-    float: left;
+.group.nav-group-item {
+    padding-left: 0;
+}
+
+tr.active,
+.table-striped tr:nth-child(even).active {
+    background-color: #dcdfe1;
 }
