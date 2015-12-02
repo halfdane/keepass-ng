@@ -1,9 +1,10 @@
 (function () {
     var remote = require('remote');
     var Menu = remote.require('menu');
+    const electron = require('electron');
 
     function trigger(event) {
-        return function() {
+        return function () {
             console.log('Triggering event: ', event);
             document.dispatchEvent(new document.defaultView.CustomEvent(event));
         };
@@ -57,7 +58,7 @@
                 menu.createMacBuiltin('FileExplorer');
             }
 
-            var name = require('electron').app.getName();
+            var name = electron.app.getName();
             template.unshift({
                 label: name,
                 submenu: [
@@ -97,7 +98,7 @@
                         label: 'Quit',
                         accelerator: 'Command+Q',
                         click: function () {
-                            require('electron').app.quit();
+                            electron.app.quit();
                         }
                     },
                 ]

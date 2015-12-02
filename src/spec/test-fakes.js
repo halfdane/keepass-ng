@@ -1,3 +1,6 @@
+var proxyquire = require('proxyquireify')(require);
+
+
 function createMouseEvent(eventName) {
     if (!window.HTMLElement.prototype[eventName]) {
         window.HTMLElement.prototype[eventName] = function () {
