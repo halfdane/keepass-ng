@@ -24,12 +24,18 @@ function fakeKpio() {
 }
 describe('KeepassIoBridge', () => {
 
-    it('should use provided path and password', () => {
+    it('should use provided path and password', done => {
         const keepassio = fakeKpio();
-        new KeepassIoBridge(keepassio, 'path', 'passwd');
+        const k = new KeepassIoBridge(keepassio, 'path', 'passwd');
 
-        expect(keepassio.password).to.have.been.calledWith('passwd');
-        expect(keepassio.loadFile).to.have.been.calledWith('path');
+        k._loadDatabase.then(()  => {
+            expect(keepassio.password).to.have.been.calledWith('passwd');
+            expect(keepassio.loadFile).to.have.been.calledWith('path');
+            done();
+        }, err => {
+            console.log(err);
+        });
+
     });
 
 });
