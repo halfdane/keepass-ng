@@ -11,12 +11,13 @@ export default class EntryList extends events.EventEmitter {
         this.setupEvents();
 
         this.template = `
-        <table class="table table-hover">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>Title</th>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>URL</th>
                     <th>Notes</th>
                 </tr>
             </thead>
