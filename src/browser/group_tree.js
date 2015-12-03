@@ -5,7 +5,7 @@ var Mark = require('markup-js');
 
 export default class GroupTree extends events.EventEmitter {
 
-    constructor(domElement) {
+    constructor(domElement = document.getElementById('groups')) {
         super();
         this.element = domElement;
         this.setupEvents();

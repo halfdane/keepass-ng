@@ -3,10 +3,7 @@ import EntryList from './entry_list.js';
 
 export default class MainView {
 
-    constructor(groupElement, entriesElement, electronClipboard, keepassBridge) {
-        const groupTree = new GroupTree(groupElement);
-        const entryList = new EntryList(entriesElement);
-
+    constructor(electronClipboard, keepassBridge, groupTree = new GroupTree(), entryList = new EntryList()) {
         groupTree.on('navigate', uuid => {
             console.log('Group', uuid);
             keepassBridge.getGroupEntries(uuid, entries => entryList.show(entries));

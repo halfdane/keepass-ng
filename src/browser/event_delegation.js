@@ -1,13 +1,13 @@
-(function(document, EventTarget) {
+(function (document, Event) {
 
     /* Check various vendor-prefixed versions of Element.matches */
     function matches(selector, currentNode) {
         var vendors = ['webkit', 'ms', 'moz'],
                 count = vendors.length, vendor, i;
 
-        for(i = 0; i < count; i++) {
+        for (i = 0; i < count; i++) {
             vendor = vendors[i];
-            if((vendor + 'MatchesSelector') in currentNode) {
+            if ((vendor + 'MatchesSelector') in currentNode) {
                 return currentNode[vendor + 'MatchesSelector'](selector);
             }
         }
@@ -17,11 +17,11 @@
     function passedThrough(event, selector, stopAt) {
         var currentNode = event.target;
 
-        while(true) {
-            if(matches(selector, currentNode)) {
+        while (true) {
+            if (matches(selector, currentNode)) {
                 return currentNode;
             }
-            else if(currentNode !== stopAt && currentNode !== document.body) {
+            else if (currentNode !== stopAt && currentNode !== document.body) {
                 currentNode = currentNode.parentNode;
             }
             else {
@@ -30,26 +30,14 @@
         }
     }
 
-    /* Extend the EventTarget prototype to add a proxyEventListener() event */
-    EventTarget.prototype.delegateEventListener = function(eName, toFind, fn) {
-        this.addEventListener(eName, function(event) {
-            var found = passedThrough(event, toFind, event.currentTarget);
-
-            if(found) {
-                // Execute the callback with the context set to the found element
-                // jQuery goes way further, it even has it's own event object
-                fn.call(found, event);
-            }
-        });
-    };
-
-    window.Event.prototype.parent = function (toFind, callback) {
+    /* Extend the Event prototype to add a parent-searcher */
+    Event.prototype.parent = function (toFind, callback) {
         var found = passedThrough(this, toFind, this.currentTarget);
 
-        if(found) {
+        if (found) {
             callback(found);
         }
         return this;
     };
 
-}(window.document, window.EventTarget || window.Element));
+}(window.document, window.Event || window.Element));

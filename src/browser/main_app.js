@@ -11,11 +11,7 @@ require('./sprites_css.js');
 document.addEventListener('DOMContentLoaded', () => {
     new AppMenu();
     const keepassBridge = new KeepassBridge(keepassIo, './example.kdbx', 'password');
-    new Mainview(document.getElementById('sidebar'),
-            document.getElementById('entries'),
-            electron.clipboard,
-            keepassBridge
-    );
+    new Mainview(electron.clipboard, keepassBridge);
 
 });
 

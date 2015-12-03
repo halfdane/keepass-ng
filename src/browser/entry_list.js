@@ -5,7 +5,7 @@ var Mark = require('markup-js');
 
 export default class EntryList extends events.EventEmitter {
 
-    constructor(domElement) {
+    constructor(domElement = document.getElementById('entries')) {
         super();
         this.element = domElement;
         this.setupEvents();
