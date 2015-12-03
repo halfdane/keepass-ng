@@ -11,10 +11,10 @@ export default class GroupTree extends events.EventEmitter {
         this.setupEvents();
 
         Mark.includes.groupTree = `
-        <ul class="nav nav-group">
+        <ul class="nav nav-pills nav-stacked">
         {{Groups}}
-            <li>
-                <a class="nav-group-item group" data-UUID="{{UUID}}">
+            <li class="group" data-UUID="{{UUID}}">
+                <a>
                     <span class="icon-number-{{IconID}}"></span>
                     <span>{{Name}}</span>
                 </a>
