@@ -15,14 +15,16 @@ describe('EntryList', () => {
 
         function createEntry(n = 1) {
             return {
-                title: `t${n}`,
-                username: `username${n}`,
-                password: `passwd${n}`,
-                url: `url${n}`,
-                notes: `notes${n}`,
-                uuid: `uuid${n}`,
-                icon: `iconid${n}`,
-                tags: `tags${n}`
+                UUID: `uuid${n}`,
+                IconID: `iconid${n}`,
+                Tags: `tags${n}`,
+                String: new Map([
+                    ['Title', `t${n}`],
+                    ['UserName', `username${n}`],
+                    ['Password', `passwd${n}`],
+                    ['URL', `url${n}`],
+                    ['Notes', `notes${n}`]]
+                )
             };
         }
 

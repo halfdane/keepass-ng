@@ -18,9 +18,9 @@ describe('GroupTree', () => {
                 Name: `name${n}`,
                 UUID: `uuid${n}`,
                 IconID: `iconid${n}`,
-                Groups: []
+                Group: []
             };
-            subGroups.forEach(g => group.Groups.push(g));
+            subGroups.forEach(g => group.Group.push(g));
 
             return group;
         }

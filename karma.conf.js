@@ -2,14 +2,15 @@ module.exports = function (config) {
     config.set({
         basePath: '',
 
-        frameworks: ['browserify', 'mocha', 'chai-dom', 'sinon-chai'],
+        frameworks: ['browserify', 'mocha', 'chai-dom', 'chai-sinon'],
 
         browsers: ['PhantomJS'],
         singleRun: true,
 
         files: [
-                'src/spec/test-fakes.js',
-                'src/spec/**/*-Spec.js'
+            'node_modules/babel-polyfill/dist/polyfill.js',
+            'src/spec/test-fakes.js',
+            'src/spec/**/*-Spec.js'
         ],
 
         preprocessors: {

@@ -23,15 +23,15 @@ export default class EntryList extends events.EventEmitter {
             </thead>
             <tbody>
             {{entries}}
-                <tr class="entry" data-UUID="{{uuid}}" data-username="{{username}}">
+                <tr class="entry" data-UUID="{{UUID}}" data-username="{{String|call>get>UserName|blank>}}">
                     <td>
-                        <span class="icon-number-{{icon}}"></span>
-                        <span>{{title}}</span>
+                        <span class="icon-number-{{IconID}}"></span>
+                        <span>{{String|call>get>Title|blank>}}</span>
                     </td>
-                    <td>{{username}}</td>
+                    <td>{{String|call>get>UserName|blank>}}</td>
                     <td>****</td>
-                    <td>{{url}}</td>
-                    <td>{{notes}}</td>
+                    <td>{{String|call>get>URL|blank>}}</td>
+                    <td>{{String|call>get>Notes|blank>}}</td>
                 </tr>
             {{/entries}}
             </tbody>
@@ -62,12 +62,11 @@ export default class EntryList extends events.EventEmitter {
     }
 
     show(entries) {
-        var self = this;
         if (!entries) {
-            return;
+            entries = [];
         }
 
-        self.element.innerHTML = Mark.up(this.template, {entries: entries});
+        this.element.innerHTML = Mark.up(this.template, {entries: entries});
     }
 
     getIdOfActiveEntry() {
