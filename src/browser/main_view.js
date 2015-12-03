@@ -7,8 +7,6 @@ export default class MainView {
         const groupTree = new GroupTree(groupElement);
         const entryList = new EntryList(entriesElement);
 
-        keepassBridge.getDatabaseGroups(groups => groupTree.show(groups));
-
         groupTree.on('navigate', uuid => {
             console.log('Group', uuid);
             keepassBridge.getGroupEntries(uuid, entries => entryList.show(entries));
@@ -18,6 +16,7 @@ export default class MainView {
             console.log('Entry', uuid);
         });
 
+        keepassBridge.getDatabaseGroups(groups => groupTree.show(groups));
 
         document.addEventListener('copy-password-of-active-entry', () => {
             var entryId = entryList.getIdOfActiveEntry();
@@ -28,6 +27,7 @@ export default class MainView {
                         }
                     });
         });
+
         document.addEventListener('copy-username-of-active-entry', () => {
             var username = entryList.getUsernameOfActiveEntry();
             if (!!username) {

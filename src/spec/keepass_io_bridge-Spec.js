@@ -14,7 +14,7 @@ function fakeKpio(groupTree = {}, entries = []) {
                 return {
                     'getGroupTree': sinon.stub().returns(groupTree),
                     'getEntries': fake.getEntries
-                }
+                };
             }
         };
     };
@@ -146,12 +146,6 @@ describe('KeepassIoBridge', () => {
                 expect(keepassio.getEntries).to.have.been.calledWith('someGroupId');
                 done();
             });
-        });
-
-        it('should log', () => {
-            let m = testDatabase;
-            m = {};
-            console.log(m);
         });
     });
 
@@ -454,3 +448,9 @@ let testDatabase = {
         }
     }
 };
+
+it('should log', () => {
+    let m = testDatabase;
+    m = {};
+    console.log(m);
+});

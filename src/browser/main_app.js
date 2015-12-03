@@ -1,7 +1,5 @@
 import electron from 'electron';
 
-import GroupTree  from './group_tree.js';
-import EntryList from './entry_list.js';
 import Mainview from './main_view';
 import KeepassBridge from './keepass_io_bridge';
 
