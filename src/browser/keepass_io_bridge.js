@@ -9,6 +9,7 @@ export default class KeepassIoBridge {
         this.password = password;
 
         this._loadDatabase = new Promise((resolve, reject) => {
+
             if (!!this.walker) {
                 resolve(this.walker);
             }
@@ -27,18 +28,19 @@ export default class KeepassIoBridge {
         });
     }
 
-    getDatabaseGroups(callback) {
-        this._loadDatabase
-                .then(walker => callback(walker.database.Root.Group));
+    getDatabaseGroups() {
+        return this._loadDatabase
+                .then(walker => walker.database.Root.Group);
     }
 
-    getGroupEntries(groupId, callback) {
-        this._loadDatabase
-                .then(walker => callback(walker.entriesInGroup.get(groupId)));
+    getGroupEntries(groupId) {
+        return this._loadDatabase
+                .then(walker => walker.entriesInGroup.get(groupId));
     }
 
-    getPassword(entryId, callback) {
-        callback('I don\'t get the passwords yet :P');
+    getPassword(entryId) {
+        return this._loadDatabase
+                .then(walker => `Password not implemented (${entryId})`);
     }
 
     matchEntries(dbpath, password, userinput, callback) {

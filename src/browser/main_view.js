@@ -6,19 +6,21 @@ export default class MainView {
     constructor(electronClipboard, keepassBridge, groupTree = new GroupTree(), entryList = new EntryList()) {
         groupTree.on('navigate', uuid => {
             console.log('Group', uuid);
-            keepassBridge.getGroupEntries(uuid, entries => entryList.show(entries));
+            keepassBridge.getGroupEntries(uuid)
+                    .then(entries => entryList.show(entries));
         });
 
         entryList.on('navigate', function (uuid) {
             console.log('Entry', uuid);
         });
 
-        keepassBridge.getDatabaseGroups(groups => groupTree.show(groups));
+        keepassBridge.getDatabaseGroups()
+                .then(groups => groupTree.show(groups));
 
         document.addEventListener('copy-password-of-active-entry', () => {
             var entryId = entryList.getIdOfActiveEntry();
-            keepassBridge.getPassword(entryId,
-                    password => {
+            keepassBridge.getPassword(entryId)
+                    .then(password => {
                         if (!!password) {
                             electronClipboard.writeText(password);
                         }

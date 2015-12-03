@@ -15,24 +15,22 @@ describe('MainView', () => {
         expect(MainView).to.exist;
     });
 
-    it('should be instantiated', () => {
-        const keepassFake = {
-            getDatabaseGroups: sinon.stub().callsArg(0)
-        };
-        const mainView = new MainView(undefined, keepassFake);
-        expect(mainView).to.exist;
-    });
+    const keepassFake = {
+        getDatabaseGroups: () => {
+            return {
+                then: (callback) => {
+                    callback([]);
+                }
+            };
+        }
+    };
 
     it('should be instantiated', () => {
-        const keepassFake = {getDatabaseGroups: sinon.stub().callsArg(0)};
-
         const mainView = new MainView(undefined, keepassFake);
-
         expect(mainView).to.exist;
     });
 
     it('should register on grouptree', () => {
-        const keepassFake = {getDatabaseGroups: sinon.stub().callsArgWith(0, [])};
         const fakeGroupTree = {on: sinon.stub(), show: sinon.stub()};
 
         new MainView(undefined, keepassFake, fakeGroupTree);
@@ -42,7 +40,6 @@ describe('MainView', () => {
     });
 
     it('should register on entrylist', () => {
-        const keepassFake = {getDatabaseGroups: sinon.stub().callsArgWith(0, [])};
         const fakeEntryList = {on: sinon.stub(), show: sinon.stub()};
 
         new MainView(undefined, keepassFake, undefined, fakeEntryList);
