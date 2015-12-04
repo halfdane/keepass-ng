@@ -71,21 +71,12 @@ export default class KeepassTransformer {
 
 export function sanitizeDb(database) {
 
-    function stringAttributeToMap(stringAtt) {
-        function onlyUnprotected({Value: value}) {
-            return !(value && value.$ && value.$.Protected && value.$.Protected === 'True');
-        }
+    function onlyUnprotected({Value: value}) {
+        return !(!!value && !!value.$ && !!value.$.Protected && value.$.Protected === 'True');
+    }
 
-        function objectToTuple({Key: key, Value: value}) {
-            return [key, value];
-        }
-
-        if (!!stringAtt) {
-            return new Map(
-                    stringAtt
-                            .filter(onlyUnprotected)
-                            .map(objectToTuple));
-        }
+    function objectToTuple({Key: key, Value: value}) {
+        return [key, value];
     }
 
     function valuesOf(elementOrArray) {
@@ -95,30 +86,35 @@ export function sanitizeDb(database) {
         return [];
     }
 
-    function* sanitizeEntries(givenDatabase) {
-        let database = (JSON.parse(JSON.stringify(givenDatabase)));
-        for (let entry of valuesOf(database.Entry)) {
-            entry.String = stringAttributeToMap(entry.String);
-            yield {groupId: database.UUID, entry: entry};
+    function* sanitizeEntries(db) {
+        for (let entry of valuesOf(db.Entry)) {
+            if (!!entry.String) {
+                entry.String = new Map(
+                        entry.String.filter(onlyUnprotected)
+                                .map(objectToTuple));
+            }
+            yield {groupId: db.UUID, entry: entry};
         }
 
-        for (let root of valuesOf(database.Root)) {
+        for (let root of valuesOf(db.Root)) {
             yield* sanitizeEntries(root);
         }
 
-        for (let group of valuesOf(database.Group)) {
+        for (let group of valuesOf(db.Group)) {
             yield* sanitizeEntries(group);
         }
     }
 
     return new Promise((resolve, reject) => {
         let entriesToGroupId = new Map();
-        for (let {groupId: groupId, entry: entry} of sanitizeEntries(database.KeePassFile)) {
+        let copy = (JSON.parse(JSON.stringify(database.KeePassFile)));
+
+        for (let {groupId: groupId, entry: entry} of sanitizeEntries(copy)) {
             if (!entriesToGroupId.has(groupId)) {
                 entriesToGroupId.set(groupId, []);
             }
             entriesToGroupId.get(groupId).push(entry);
         }
-        resolve({database: database, entriesToGroupId: entriesToGroupId});
+        resolve({database: copy, entriesToGroupId: entriesToGroupId});
     });
 }
