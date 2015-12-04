@@ -33,6 +33,10 @@ npm start
     
 
 ## TODO
+- ~~be able to copy protected data (like passwords) to clipboard~~
+- ask for password and file
+- timeout for cached password and data
+- remember last opened file
 - add search functionality honoring the `protected` and `no-search` fields of entries
 - autocomplete for search
 - make search available via global shortcut

@@ -1,6 +1,6 @@
 describe('Promises', () => {
     it('should resolve', done => {
-        var promise = new Promise(function (resolve, reject) {
+        let promise = new Promise((resolve, reject) => {
             resolve('Stuff worked!');
         });
 
@@ -8,7 +8,7 @@ describe('Promises', () => {
     });
 
     it('should resolve twice', done => {
-        var promise = new Promise(function (resolve, reject) {
+        let promise = new Promise((resolve, reject) => {
             resolve('Stuff worked!');
         });
 
@@ -22,8 +22,26 @@ describe('Promises', () => {
                 });
     });
 
+    it('should resolve twice but invoked ONLY ONCE (result is cached)', done => {
+        let costlyFunction = sinon.stub();
+        let promise = new Promise((resolve, reject) => {
+            costlyFunction();
+            resolve('Stuff worked!');
+        });
+
+        promise.then(s => {
+                    expect(costlyFunction).to.be.calledOnce;
+                    return promise;
+                })
+                .then(s => {
+                    expect(costlyFunction).to.be.calledOnce;
+                })
+                .then(done)
+                .catch(done);
+    });
+
     it('should fail', done => {
-        var promise = new Promise(function (resolve, reject) {
+        let promise = new Promise((resolve, reject) => {
             reject('Well, that was unfortunate.');
         });
 

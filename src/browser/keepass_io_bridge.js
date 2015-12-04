@@ -1,4 +1,4 @@
-import KeepassWalker from './keepass_walker';
+import { sanitizeDb, getString } from '../browser/keepass_walker';
 
 export default class KeepassIoBridge {
 
@@ -8,12 +8,11 @@ export default class KeepassIoBridge {
         this.dbpath = dbpath;
         this.password = password;
 
-        this._loadDatabase = new Promise((resolve, reject) => {
+        this._loadDatabase = this._loadAsync(sanitizeDb);
+    }
 
-            if (!!this.walker) {
-                resolve(this.walker);
-            }
-
+    _loadAsync(withRawDatabase) {
+        return new Promise((resolve, reject) => {
             var db = new this.kpio.Database();
             db.addCredential(new this.kpio.Credentials.Password(this.password));
             // db.addCredential(new this.kpio.Credentials.Keyfile('apoc.key'));
@@ -21,26 +20,23 @@ export default class KeepassIoBridge {
                 if (err) {
                     reject(err);
                 }
-
-                this.walker = new KeepassWalker(db.getRawApi().get().KeePassFile);
-                resolve(this.walker);
+                resolve(withRawDatabase(db.getRawApi().get().KeePassFile));
             });
         });
     }
 
     getDatabaseGroups() {
         return this._loadDatabase
-                .then(walker => walker.database.Root.Group);
+                .then(({database: database}) => database.Root.Group);
     }
 
     getGroupEntries(groupId) {
         return this._loadDatabase
-                .then(walker => walker.entriesInGroup.get(groupId));
+                .then(({entriesToGroupId: entriesToGroupId}) => entriesToGroupId.get(groupId));
     }
 
     getPassword(entryId) {
-        return this._loadDatabase
-                .then(walker => `Password not implemented (${entryId})`);
+        return this._loadAsync(getString(entryId, 'Password'));
     }
 
     matchEntries(dbpath, password, userinput, callback) {
