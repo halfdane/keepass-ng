@@ -1,14 +1,9 @@
+import triggerEvent from './event/trigger';
+
 (function () {
     var remote = require('remote');
     var Menu = remote.require('menu');
     const electron = require('electron');
-
-    function trigger(event) {
-        return function () {
-            console.log('Triggering event: ', event);
-            document.dispatchEvent(new document.defaultView.CustomEvent(event));
-        };
-    }
 
     document.addEventListener('keydown', function (event) {
         var ctrlDown = event.ctrlKey || event.metaKey; // Mac support
@@ -17,9 +12,9 @@
         if (ctrlDown && event.altKey) {
 
         } else if (ctrlDown && event.keyCode === 67) {
-            trigger('copy-password-of-active-entry')();
+            triggerEvent('copy-password-of-active-entry');
         } else if (ctrlDown && event.keyCode === 66) {
-            trigger('copy-username-of-active-entry')();
+            triggerEvent('copy-username-of-active-entry');
         }
     });
 
@@ -33,12 +28,12 @@
                     {
                         label: 'Copy password of active item',
                         accelerator: 'CmdOrCtrl+C',
-                        click: trigger('copy-password-of-active-entry')
+                        click: () => triggerEvent('copy-password-of-active-entry')
                     },
                     {
                         label: 'Copy username of active item',
                         accelerator: 'CmdOrCtrl+B',
-                        click: trigger('copy-username-of-active-entry')
+                        click: () => triggerEvent('copy-username-of-active-entry')
                     },
                     {
                         label: 'Reload',

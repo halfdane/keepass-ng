@@ -19,7 +19,8 @@
     "electron-prebuilt": "^0.35.0",
     "fs-extra": "^0.20.1",
     "jade": "^1.11.0",
-    "keepass.io": "^1.1.2"
+    "keepass.io": "^1.1.2",
+    "loglevel": "^1.4.0"
   },
   "devDependencies": {
     "babel": "^6.1.18",
@@ -35,10 +36,6 @@
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
     "chai-dom": "^1.4.0",
-    "del": "^2.0.2",
-    "electron-connect": "^0.3.3",
-    "electron-mocha": "^0.6.3",
-    "electron-prebuilt": "^0.35.0",
     "es": "^0.4.8",
     "glob": "^6.0.1",
     "istanbul-instrumenter-loader": "^0.1.3",
