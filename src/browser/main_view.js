@@ -1,5 +1,6 @@
 import GroupTree  from './group_tree.js';
 import EntryList from './entry_list.js';
+import 'babel-polyfill';
 
 export default class MainView {
 

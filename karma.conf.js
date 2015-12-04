@@ -8,7 +8,6 @@ module.exports = function (config) {
         singleRun: true,
 
         files: [
-            'node_modules/babel-polyfill/dist/polyfill.js',
             'src/spec/test-fakes.js',
             'src/spec/**/*-Spec.js'
         ],
