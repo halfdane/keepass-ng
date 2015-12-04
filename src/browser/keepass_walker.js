@@ -65,6 +65,60 @@ export default class KeepassTransformer {
     }
 
     static _isReadable(value) {
-        return !value || !value.$ || !value.$.Protected || value.$.Protected !== 'True';
+        return !(value && value.$ && value.$.Protected && value.$.Protected === 'True');
     }
+}
+
+export function sanitizeDb(database) {
+
+    function stringAttributeToMap(stringAtt) {
+        function onlyUnprotected({Value: value}) {
+            return !(value && value.$ && value.$.Protected && value.$.Protected === 'True');
+        }
+
+        function objectToTuple({Key: key, Value: value}) {
+            return [key, value];
+        }
+
+        if (!!stringAtt) {
+            return new Map(
+                    stringAtt
+                            .filter(onlyUnprotected)
+                            .map(objectToTuple));
+        }
+    }
+
+    function valuesOf(elementOrArray) {
+        if (!!elementOrArray) {
+            return (!!elementOrArray.values ? elementOrArray : [elementOrArray]).values();
+        }
+        return [];
+    }
+
+    function* sanitizeEntries(givenDatabase) {
+        let database = (JSON.parse(JSON.stringify(givenDatabase)));
+        for (let entry of valuesOf(database.Entry)) {
+            entry.String = stringAttributeToMap(entry.String);
+            yield {groupId: database.UUID, entry: entry};
+        }
+
+        for (let root of valuesOf(database.Root)) {
+            yield* sanitizeEntries(root);
+        }
+
+        for (let group of valuesOf(database.Group)) {
+            yield* sanitizeEntries(group);
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        let entriesToGroupId = new Map();
+        for (let {groupId: groupId, entry: entry} of sanitizeEntries(database.KeePassFile)) {
+            if (!entriesToGroupId.has(groupId)) {
+                entriesToGroupId.set(groupId, []);
+            }
+            entriesToGroupId.get(groupId).push(entry);
+        }
+        resolve({database: database, entriesToGroupId: entriesToGroupId});
+    });
 }

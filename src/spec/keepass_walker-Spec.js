@@ -1,4 +1,5 @@
 import KeepassWalker from '../browser/keepass_walker';
+import { sanitizeDb } from '../browser/keepass_walker';
 
 describe('KeepassTransformer', ()=> {
 
@@ -141,5 +142,58 @@ describe('KeepassTransformer', ()=> {
         expect(mainGroup.Group[1].UUID).to.equal('PtfRMFDAvkeQBJ/VTfhJ2Q==');
         expect(mainGroup.Group[1].Entry.UUID).to.equal('XGgNkCd2WESeK0KK1K7ahg==');
         expect(mainGroup.Group[1].Group.UUID).to.equal('VGxv5yLT60mvcB1baVo56w==');
+    });
+
+    describe('the iterative walker', () => {
+        it('gets all the entries', done => {
+            sanitizeDb(testDatabase)
+                    .then(({database: database, entriesToGroupId: entriesToGroupId}) => {
+                        const g1 = entriesToGroupId.get('n3rnRvvOF0SvPriiFXr+Tg==');
+                        expect(g1).to.exist;
+                        expect(g1.length).to.equal(2);
+                        expect(g1[0].UUID).to.equal('ZAw4YRw+pEic7TYfVOQ9vg==');
+                        expect(g1[1].UUID).to.equal('245S+MhtfUaOzVPUwv4KMQ==');
+
+                        const g2 = entriesToGroupId.get('PtfRMFDAvkeQBJ/VTfhJ2Q==');
+                        expect(g2).to.exist;
+                        expect(g2.length).to.equal(1);
+                        expect(g2[0].UUID).to.equal('XGgNkCd2WESeK0KK1K7ahg==');
+
+                        const g3 = entriesToGroupId.get('VGxv5yLT60mvcB1baVo56w==');
+                        expect(g3).to.exist;
+                        expect(g3.length).to.equal(1);
+                        expect(g3[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+
+                        expect(entriesToGroupId.size).to.equal(3);
+                    })
+                    .then(done)
+                    .catch(done);
+        });
+
+        it('gets all the entries - TWICE', done => {
+            sanitizeDb(testDatabase)
+                    .then(({database: database, entriesToGroupId: entriesToGroupId}) => {
+                        const g1 = entriesToGroupId.get('n3rnRvvOF0SvPriiFXr+Tg==');
+                        expect(g1).to.exist;
+                        expect(g1.length).to.equal(2);
+                        expect(g1[0].UUID).to.equal('ZAw4YRw+pEic7TYfVOQ9vg==');
+                        expect(g1[1].UUID).to.equal('245S+MhtfUaOzVPUwv4KMQ==');
+
+                        const g2 = entriesToGroupId.get('PtfRMFDAvkeQBJ/VTfhJ2Q==');
+                        expect(g2).to.exist;
+                        expect(g2.length).to.equal(1);
+                        expect(g2[0].UUID).to.equal('XGgNkCd2WESeK0KK1K7ahg==');
+
+                        const g3 = entriesToGroupId.get('VGxv5yLT60mvcB1baVo56w==');
+                        expect(g3).to.exist;
+                        expect(g3.length).to.equal(1);
+                        expect(g3[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+
+                        expect(entriesToGroupId.size).to.equal(3);
+                    })
+                    .then(done)
+                    .catch(done);
+        });
+
     });
 });
