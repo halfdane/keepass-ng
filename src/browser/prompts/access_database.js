@@ -55,6 +55,7 @@ export default class AccessDatabase {
                     element.id = elementId;
                     element.innerHTML = htmlString;
                     document.body.appendChild(element);
+                    document.body.classList.add('modal-open');
                     resolve(element);
                 } catch (err) {
                     reject(err);

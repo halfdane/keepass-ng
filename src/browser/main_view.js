@@ -63,6 +63,11 @@ export default class MainView {
                 log.debug('Missing credentials. Getting them');
                 this.getFileAndCredentials();
             }
+        } else if (err.name === 'KpioDatabaseError') {
+            if (err.message === 'Could not decrypt database. Either the credentials were invalid or the database is corrupt.') {
+                log.debug('file not found');
+                this.getFileAndCredentials({password: 'wrongPasswordOrCorruptDatabase'});
+            }
         } else if (err.name === 'KpioGenericError') {
             if (err.message.startsWith('Database file does not exist:')) {
                 log.debug('file not found');

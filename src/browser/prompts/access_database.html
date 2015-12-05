@@ -1,72 +1,54 @@
 <link href="{{current_dir}}/access_database.css" rel="stylesheet">
-<div class="dialog">
-    <p>This would be the place to enter your credentials.</p>
-    <p>For now, it's just a placeholder.</p>
-    <p>Since the credentials have a timeout, you'll see this dialog from time to time.</p>
-
-    <form>
-        <div class="form-group {{errors.dbfile|choose>has-error>}}">
-            <label for="dbfile">Database File</label>
-            <input type="text" class="form-control dbfile" id="dbfile" placeholder="Database File" value="./example.kdbx"
-                   aria-describedby="{{errors.dbfile|choose>inputError2Status>}}">
-
-            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-            <span id="inputError2Status" class="sr-only">(error)</span>
-
-            <span id="helpBlock" class="help-block">{{errors.dbfile|blank>}}</span>
-        </div>
-        <div class="form-group">
-            <label for="password">Master Password</label>
-            <input type="password" class="form-control password" id="password" placeholder="Password" value="password">
-        </div>
-        <div class="form-group">
-            <label for="keyfile">Key File</label>
-            <input type="text" class="form-control keyfile" id="keyfile" placeholder="Key File">
-        </div>
-        <input class="okay btn btn-primary" type="button" value="Ok"/>
-        <input class="cancel btn btn-default" type="button" value="Cancel"/>
-    </form>
-
-</div>
-
-<!--
-<div class="modal fade" tabindex="-1" role="dialog">
+<div class="modal fade in">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Modal title</h4>
+                <h4 class="modal-title">Enter Credentials</h4>
             </div>
             <div class="modal-body">
-                <p>This would be the place to enter your credentials.</p>
-                <p>For now, it's just a placeholder.</p>
                 <p>Since the credentials have a timeout, you'll see this dialog from time to time.</p>
                 <form>
-                    <div class="form-group {{errors.dbfile|choose>has-error>}}">
+                    <div class="form-group {{errors.dbfile|choose>has-error has-feedback>}}">
                         <label for="dbfile">Database File</label>
-                        <input type="text" class="form-control dbfile" id="dbfile" placeholder="Database File" value="./example.kdbx"
+                        <input type="text" class="form-control dbfile" id="dbfile" placeholder="Database File"
+                               value="./example.kdbx"
                                aria-describedby="{{errors.dbfile|choose>inputError2Status>}}">
-
+                        {{if errors.dbfile}}
                         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-                        <span id="inputError2Status" class="sr-only">(error)</span>
+                        <span id="inputError2Status" class="sr-only">{{errors.dbfile|blank>}}</span>
 
                         <span id="helpBlock" class="help-block">{{errors.dbfile|blank>}}</span>
+                        {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group {{errors.password|choose>has-error has-feedback>}}">
                         <label for="password">Master Password</label>
-                        <input type="password" class="form-control password" id="password" placeholder="Password" value="password">
+                        <input type="password" class="form-control password" id="password" placeholder="Password"
+                               value="password" aria-describedby="{{errors.password|choose>inputError2Status>}}">
+                        {{if errors.password}}
+                        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                        <span id="inputError2Status" class="sr-only">{{errors.password|blank>}}</span>
+
+                        <span id="helpBlock" class="help-block">{{errors.password|blank>}}</span>
+                        {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="form-group {{errors.keyfile|choose>has-error has-feedback>}}">
                         <label for="keyfile">Key File</label>
-                        <input type="text" class="form-control keyfile" id="keyfile" placeholder="Key File">
+                        <input type="text" class="form-control keyfile" id="keyfile" placeholder="Key File"
+                               aria-describedby="{{errors.keyfile|choose>inputError2Status>}}">
+                        {{if errors.keyfile}}
+                        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+                        <span id="inputError2Status" class="sr-only">{{errors.keyfile|blank>}})</span>
+
+                        <span id="helpBlock" class="help-block">{{errors.keyfile|blank>}}</span>
+                        {{/if}}
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class=" modal-footer">
                 <button type="button" class="cancel btn btn-default" data-dismiss="modal">Cancel</button>
                 <button type="button" class="okay btn btn-primary">Ok</button>
             </div>
         </div>
+    </div>
 </div>
-</div>
--->
+<div class="modal-backdrop fade in"></div>
