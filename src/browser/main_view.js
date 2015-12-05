@@ -48,7 +48,7 @@ export default class MainView {
 
         document.addEventListener('password-for-database-set', event => {
             log.debug('setting password');
-            keepassBridge.accessDatabase(event.detail.password, event.detail.file);
+            keepassBridge.accessDatabase(event.detail.password, event.detail.dbfile);
             triggerEvent('reload-database');
         });
 
@@ -63,17 +63,20 @@ export default class MainView {
                 log.debug('Missing credentials. Getting them');
                 this.getFileAndCredentials();
             }
+        } else if (err.name === 'KpioGenericError') {
+            if (err.message.startsWith('Database file does not exist:')) {
+                log.debug('file not found');
+                this.getFileAndCredentials({dbfile: 'fileNotFound'});
+            }
         } else {
             console.error('COULD NOT HANDLE ', err);
         }
     }
 
-    getFileAndCredentials() {
-        log.debug('Retrieving credentials');
-        new AccessDatabase()
-                .then(({password: password, file: file}) => {
-                    log.debug('Got the credentials');
-                    triggerEvent('password-for-database-set', {password: password, file: file});
+    getFileAndCredentials(errors) {
+        new AccessDatabase(errors)
+                .then(({password: password, dbfile: file}) => {
+                    triggerEvent('password-for-database-set', {password: password, dbfile: file});
                 })
     }
 }

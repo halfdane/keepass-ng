@@ -5,7 +5,6 @@ export default class KeepassIoBridge {
 
     constructor(keepassio) {
         this.kpio = keepassio;
-        log.debug(log);
     }
 
     accessDatabase(password, file) {

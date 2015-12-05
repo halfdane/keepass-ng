@@ -8,7 +8,7 @@
     z-index: 1000;
 }
 
-#access_database div {
+#access_database .dialog {
     width:300px;
     margin: 100px auto;
     background-color: #fff;
