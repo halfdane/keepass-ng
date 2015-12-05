@@ -10,7 +10,7 @@ export default class KeepassIoBridge {
     accessDatabase(password, file) {
         log.debug('Accessing database with', password, file);
         new Promise((resolve, reject) => {
-            setTimeout(resolve, 10000);
+            setTimeout(resolve, 100000);
         }).then(()=> {
             log.debug('Clearing');
             delete this.password;
