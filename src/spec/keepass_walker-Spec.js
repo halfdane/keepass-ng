@@ -1,4 +1,4 @@
-import { sanitizeDb, getString } from '../browser/keepass_walker';
+import { sanitizeDb, getString } from '../browser/keepass/keepass_walker';
 
 describe('KeepassTransformer', ()=> {
 

@@ -20,7 +20,8 @@
     "fs-extra": "^0.20.1",
     "jade": "^1.11.0",
     "keepass.io": "^1.1.2",
-    "loglevel": "^1.4.0"
+    "loglevel": "^1.4.0",
+    "text": "github:requirejs/text"
   },
   "devDependencies": {
     "babel": "^6.1.18",

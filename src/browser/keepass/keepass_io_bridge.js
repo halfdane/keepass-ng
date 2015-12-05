@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import { sanitizeDb, getString } from '../browser/keepass_walker';
+import { sanitizeDb, getString } from './keepass_walker';
 
 export default class KeepassIoBridge {
 

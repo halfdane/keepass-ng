@@ -2,8 +2,10 @@ import log from 'loglevel';
 import 'babel-polyfill';
 
 import triggerEvent from './event/trigger';
-import GroupTree  from './group_tree.js';
-import EntryList from './entry_list.js';
+import GroupTree  from './mainwindow/group_tree';
+import EntryList from './mainwindow/entry_list';
+
+import AccessDatabase from './prompts/access_database';
 
 export default class MainView {
 
@@ -68,6 +70,10 @@ export default class MainView {
 
     getFileAndCredentials() {
         log.debug('Retrieving credentials');
-        triggerEvent('password-for-database-set', {password: 'password', file: './example.kdbx'});
+        new AccessDatabase()
+                .then(({password: password, file: file}) => {
+                    log.debug('Got the credentials');
+                    triggerEvent('password-for-database-set', {password: password, file: file});
+                })
     }
 }

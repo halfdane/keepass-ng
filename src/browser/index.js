@@ -2,7 +2,7 @@ import electron from 'electron';
 import log from 'loglevel';
 
 import Mainview from './main_view';
-import KeepassBridge from './keepass_io_bridge';
+import KeepassBridge from './keepass/keepass_io_bridge';
 
 const keepassIo = require('keepass.io');
 const AppMenu = require('./menu.js');

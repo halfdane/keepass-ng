@@ -1,4 +1,4 @@
-import KeepassIoBridge from '../browser/keepass_io_bridge';
+import KeepassIoBridge from '../browser/keepass/keepass_io_bridge';
 
 function fakeKpio() {
     let fake = {};
