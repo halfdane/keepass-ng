@@ -10,11 +10,12 @@ import AccessDatabase from './prompts/access_database';
 export default class MainView {
 
     constructor(electronClipboard, keepassBridge, groupTree = new GroupTree(), entryList = new EntryList()) {
+
         groupTree.on('navigate', uuid => {
             log.debug('Group', uuid);
             keepassBridge.getGroupEntries(uuid)
                     .then(entries => entryList.show(entries))
-                    .catch(err => this.handleErrors(err));
+                    .catch(this.handleErrors.bind(this));
         });
 
         entryList.on('navigate', function (uuid) {
@@ -25,7 +26,7 @@ export default class MainView {
             log.debug('Reloading database');
             keepassBridge.getDatabaseGroups()
                     .then(groups => groupTree.show(groups))
-                    .catch(err => this.handleErrors(err));
+                    .catch(this.handleErrors.bind(this));
         });
 
         document.addEventListener('missing-credentials', () => {
@@ -42,7 +43,7 @@ export default class MainView {
                             electronClipboard.writeText(password);
                         }
                     })
-                    .catch(err => this.handleErrors(err));
+                    .catch(this.handleErrors.bind(this));
         });
 
         document.addEventListener('copy-username-of-active-entry', () => {
@@ -66,21 +67,20 @@ export default class MainView {
         if (err.name === 'KpioArgumentError') {
             if (err.message === 'Expected `rawPassword` to be a string' ||
                     err.message === 'Expected `filePath` to be a String') {
-                log.debug('Missing credentials. Getting them');
-                this.getFileAndCredentials();
+                this.getFileAndCredentials({});
             }
         } else if (err.name === 'KpioDatabaseError') {
             if (err.message === 'Could not decrypt database. Either the credentials were invalid or the database is corrupt.') {
-                log.debug('file not found');
                 this.getFileAndCredentials({password: 'wrongPasswordOrCorruptDatabase'});
             }
         } else if (err.name === 'KpioGenericError') {
             if (err.message.startsWith('Database file does not exist:')) {
-                log.debug('file not found');
                 this.getFileAndCredentials({dbfile: 'fileNotFound'});
+            } else if (err.message.startsWith('Keyfile does not exist:')) {
+                this.getFileAndCredentials({keyfile: 'fileNotFound'});
             }
         } else {
-            console.error('COULD NOT HANDLE ', err);
+            log.error('COULD NOT HANDLE ', err);
         }
     }
 

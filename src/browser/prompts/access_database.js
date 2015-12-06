@@ -10,13 +10,13 @@ function remember() {
 }
 export default class AccessDatabase {
     constructor(errors = {}) {
-        log.debug('preparing to get information for database access from user');
+        log.debug('retrieving database access information from user');
         const model = {
             errors: errors,
             lastAccessedFile: remember().lastAccessedFile()
         };
 
-        log.debug('model is prepared');
+        log.debug('model is prepared', model);
         return this.loadFile('access_database.html')
                 .then(this.renderTemplate(model))
                 .then(this.putInDom())
@@ -42,7 +42,7 @@ export default class AccessDatabase {
     renderTemplate(model) {
         return templateString => {
             return new Promise((resolve) => {
-                log.debug('rendering template');
+                log.debug('rendering template ', model);
                 resolve(Mark.up(templateString, model));
             });
         };
@@ -95,6 +95,10 @@ export default class AccessDatabase {
 
                 if (!!this.modal) {
                     this.modal.close();
+                    setTimeout(x=> {
+                        document.body.removeChild(
+                                document.getElementById('access_database'));
+                    }, 500);
                 }
             });
         };

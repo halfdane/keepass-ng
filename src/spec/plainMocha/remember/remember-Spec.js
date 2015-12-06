@@ -30,7 +30,7 @@ describe('Remember function', () => {
     });
 
     it('has some sane defaults', () => {
-        expect(remember.timeout()).to.equal(10000);
+        expect(remember.timeout()).to.equal(300000);
         expect(remember.lastAccessedFile()).to.equal('./example.kdbx');
     });
 

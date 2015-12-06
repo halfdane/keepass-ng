@@ -1,26 +1,33 @@
 import log from 'loglevel';
 
 const remember = (() => {
-    var nconf;
+    const LAST_ACCESSED_FILES = 'lastAccessedFiles';
+    const TIMEOUT_FOR_CONFIDENTIAL_DATA = 'timeoutForConfidentialData';
+
+    const DEFAULTS = {
+        [LAST_ACCESSED_FILES]: ['./example.kdbx'],
+        [TIMEOUT_FOR_CONFIDENTIAL_DATA]: 5 * 60 * 1000
+    };
+    let nconf;
 
     function lastAccessedFile(file) {
-        let lastFiles = Array.from(readSettings('lastAccessedFiles'));
+        let lastFiles = Array.from(readSettings(LAST_ACCESSED_FILES));
         if (!!file) {
             lastFiles = lastFiles.filter(f => f === file);
             lastFiles.push(file);
             if (lastFiles.length > 5) {
                 lastFiles.length = 5;
             }
-            saveSettings('lastAccessedFiles', lastFiles);
+            saveSettings(LAST_ACCESSED_FILES, lastFiles);
         }
         return lastFiles[lastFiles.length - 1];
     }
 
     function timeout(newTimeout) {
-        let timeout = readSettings('timeoutForConfidentialData');
+        let timeout = readSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA);
         if (!!newTimeout) {
             timeout = +newTimeout;
-            saveSettings('timeoutForConfidentialData', timeout);
+            saveSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA, timeout);
         }
         return timeout;
     }
@@ -38,10 +45,7 @@ const remember = (() => {
     function toLocation(file) {
         nconf = require('nconf')
                 .file({file: file})
-                .defaults({
-                    lastAccessedFiles: ['./example.kdbx'],
-                    timeoutForConfidentialData: 10000
-                });
+                .defaults(DEFAULTS);
     }
 
     function getUserHome() {
