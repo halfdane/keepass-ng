@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.global.remember = remember;
 
-    const keepassBridge = new KeepassBridge(keepassIoPromise);
+    const keepassBridge = new KeepassBridge(keepassIoPromise, remember.timeout);
     new Mainview(electron.clipboard, keepassBridge);
 });
 

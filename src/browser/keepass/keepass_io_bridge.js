@@ -1,27 +1,26 @@
 import log from 'loglevel';
 import { sanitizeDb, getString } from './keepass_walker';
 
-function remember() {
-    return window.global.remember;
-}
 export default class KeepassIoBridge {
 
-    constructor(kpioPromiseFactory) {
+    constructor(kpioPromiseFactory, timeout) {
         this.kpioPromiseFactory = kpioPromiseFactory;
         this.accessDatabase({});
+        this.waitFor = timeout();
     }
 
-    accessDatabase(info) {
-        log.debug('Accessing database with');
+    accessDatabase(incriminating) {
+        log.debug('Accessing database');
         new Promise(resolve => {
-            setTimeout(resolve, remember().timeout());
+            log.debug('Waiting for', this.waitFor);
+            setTimeout(resolve, this.waitFor);
         }).then(()=> {
-            log.debug('Clearing');
+            log.debug('Clearing data');
             delete this.incriminating;
             this.incriminating = {};
-        });
+        }).catch(log.error.bind(log));
 
-        this.incriminating = info;
+        this.incriminating = incriminating;
     }
 
     getDatabase() {
