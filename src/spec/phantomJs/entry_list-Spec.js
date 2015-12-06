@@ -1,4 +1,4 @@
-import EntryList from '../browser/mainwindow/entry_list';
+import EntryList from '../../browser/mainwindow/entry_list';
 
 describe('EntryList', () => {
 

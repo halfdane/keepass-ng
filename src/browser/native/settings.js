@@ -1,21 +1,13 @@
 import log from 'loglevel';
-var nconf = require('nconf')
-//.file({file: getUserHome() + '/.keepassng.json'})
-        .defaults({
-            lastAccessedFiles: ['./example.kdbx'],
-            timeoutForConfidentialData: '10000'
-        });
-
-function getUserHome() {
-    return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-}
 
 const remember = (() => {
+    var nconf;
+
     function lastAccessedFile(file) {
         let lastFiles = Array.from(readSettings('lastAccessedFiles'));
         if (!!file) {
+            lastFiles = lastFiles.filter(f => f === file);
             lastFiles.push(file);
-            lastFiles = [...new Set(lastFiles)];
             if (lastFiles.length > 5) {
                 lastFiles.length = 5;
             }
@@ -27,7 +19,7 @@ const remember = (() => {
     function timeout(newTimeout) {
         let timeout = readSettings('timeoutForConfidentialData');
         if (!!newTimeout) {
-            timeout = newTimeout;
+            timeout = +newTimeout;
             saveSettings('timeoutForConfidentialData', timeout);
         }
         return timeout;
@@ -43,7 +35,23 @@ const remember = (() => {
         return nconf.get(settingKey);
     }
 
+    function toLocation(file) {
+        nconf = require('nconf')
+                .file({file: file})
+                .defaults({
+                    lastAccessedFiles: ['./example.kdbx'],
+                    timeoutForConfidentialData: 10000
+                });
+    }
+
+    function getUserHome() {
+        return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+    }
+
+    toLocation(getUserHome() + '/.keepassng.json');
+
     return {
+        toLocation: toLocation,
         lastAccessedFile: lastAccessedFile,
         timeout: timeout,
         saveSettings: saveSettings,

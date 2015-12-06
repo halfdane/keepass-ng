@@ -2,11 +2,13 @@ require('chai')
         .use(require('chai-as-promised'))
         .use(require('sinon-chai'));
 
-window.remember = {
+import 'babel-polyfill';
+
+window.global = window.global || {};
+window.global.remember = {
     timeout: () => {
     }
-}
-;
+};
 
 function createMouseEvent(eventName) {
     if (!window.HTMLElement.prototype[eventName]) {

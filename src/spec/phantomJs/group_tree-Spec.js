@@ -1,4 +1,4 @@
-import GroupTree from '../browser/mainwindow/group_tree';
+import GroupTree from '../../browser/mainwindow/group_tree';
 
 describe('GroupTree', () => {
 

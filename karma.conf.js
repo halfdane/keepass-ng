@@ -8,8 +8,8 @@ module.exports = function (config) {
         singleRun: true,
 
         files: [
-            'src/spec/test-fakes.js',
-            'src/spec/**/*-Spec.js'
+            'src/spec/phantomJs/test-fakes.js',
+            'src/spec/phantomJs/**/*-Spec.js'
         ],
 
         preprocessors: {

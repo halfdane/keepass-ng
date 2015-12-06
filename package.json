@@ -9,7 +9,9 @@
     "start": "electron .",
     "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
     "pretest": "npm run hint",
-    "test": "karma start",
+    "test:mocha": "mocha --compilers js:babel-core/register --require src/spec/plainMocha/setup.js src/spec/plainMocha/**/*-Spec.js",
+    "test:phantomjs": "karma start",
+    "test": "npm run test:mocha && npm run test:phantomjs",
     "watch:test": "nodemon -e js,html,css --watch src/ --exec 'npm run test --silent'",
     "watch:build": "nodemon -e js,html,css --watch src/ --exec 'npm run build --silent'"
   },

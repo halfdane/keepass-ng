@@ -1,10 +1,10 @@
-import { sanitizeDb, getString } from '../browser/keepass/keepass_walker';
+import { sanitizeDb, getString } from '../../../browser/keepass/keepass_walker';
 
 describe('KeepassTransformer', ()=> {
 
     let testDatabase;
     beforeEach(() => {
-        testDatabase = require('./fixtures/exampledb.json');
+        testDatabase = require('./exampledb.json');
     });
 
     it('transforms single group without entries or subgroups', done => {
