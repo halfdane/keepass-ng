@@ -5,92 +5,98 @@ import path from 'path';
 
 import Mark from 'markup-js';
 
+function remember() {
+    return window.global.remember;
+}
 export default class AccessDatabase {
     constructor(errors = {}) {
+        log.debug('preparing to get information for database access from user');
+        const model = {
+            errors: errors,
+            lastAccessedFile: remember().lastAccessedFile()
+        };
+
+        log.debug('model is prepared');
         return this.loadFile('access_database.html')
-                .then(this.renderTemplate({current_dir: __dirname, errors: errors}))
-                .then(this.putInDom('access_database'))
-                .then(this.waitForClick)
-                .then(({dbfile: dbfile, password: password, keyfile: keyfile}) => {
-                    return {password: password, dbfile: dbfile, keyfile: keyfile};
-                })
-                .catch(log.debug);
+                .then(this.renderTemplate(model))
+                .then(this.putInDom())
+                .then(this.wait())
+                .then(this.done())
+                .then(info => info)
     }
 
     loadFile(filename) {
         return new Promise((resolve, reject) => {
-                    try {
-                        fs.readFile(path.resolve(__dirname, filename), 'UTF-8', (err, data) => {
-                            if (!!err) {
-                                reject(err);
-                            } else {
-                                resolve(data);
-                            }
-                        });
-                    } catch (err) {
-                        reject(err);
-                    }
+                    log.debug('Opening template');
+                    fs.readFile(path.resolve(__dirname, filename), 'UTF-8', (err, data) => {
+                        if (!!err) {
+                            reject(err);
+                        } else {
+                            resolve(data);
+                        }
+                    });
                 }
         );
     }
 
     renderTemplate(model) {
-        return (templateString) => {
-            return new Promise((resolve, reject) => {
-                try {
-                    const rendered = Mark.up(templateString, model);
-                    resolve(rendered);
-                } catch (err) {
-                    reject(err);
-                }
+        return templateString => {
+            return new Promise((resolve) => {
+                log.debug('rendering template');
+                resolve(Mark.up(templateString, model));
             });
         };
     }
 
-    putInDom(elementId) {
+    putInDom() {
         return htmlString => {
-            return new Promise((resolve, reject) => {
-                try {
-                    const element = document.createElement('div');
-                    element.id = elementId;
-                    element.innerHTML = htmlString;
-                    document.body.appendChild(element);
-                    document.body.classList.add('modal-open');
-                    resolve(element);
-                } catch (err) {
-                    reject(err);
-                }
+            return new Promise((resolve) => {
+                log.debug('opening dialog');
+                document.body
+                        .insertAdjacentHTML('beforeend', htmlString);
+
+                let element = document.getElementById('access_database');
+                this.modal = new Modal(element);
+                this.modal.open();
+                resolve();
             });
         };
     }
 
-    waitForClick(element) {
-        return new Promise((resolve, reject) => {
-            let okay = element.getElementsByClassName('okay')[0];
-            okay.addEventListener('click', event => {
-                var dbfile = element.getElementsByClassName("dbfile")[0];
-                var password = element.getElementsByClassName("password")[0];
-                var keyfile = element.getElementsByClassName("keyfile")[0];
-
-                resolve({
-                    dbfile: dbfile.value,
-                    password: password.value,
-                    keyfile: keyfile.value
-                });
-
-                if (element.parentNode) {
-                    element.parentNode.removeChild(element);
-                }
+    wait() {
+        return () => {
+            return new Promise((resolve) => {
+                log.debug('adding event listeners');
+                document.getElementById('access_database-okay')
+                        .addEventListener('click', () => {
+                            resolve('okay');
+                        });
+                document.getElementById('access_database-cancel')
+                        .addEventListener('click', () => {
+                            resolve('cancel');
+                        });
             });
-
-            let cancel = element.getElementsByClassName('cancel')[0];
-            cancel.addEventListener('click', event => {
-                reject('Abort, abort');
-                if (element.parentNode) {
-                    element.parentNode.removeChild(element);
-                }
-            });
-        });
+        };
     }
 
+    done() {
+        return selection => {
+            return new Promise((resolve) => {
+                log.debug('handling user action ', selection);
+                if (selection === 'okay') {
+                    resolve({
+                        dbfile: document.getElementById('access_database-dbfile').value,
+                        password: document.getElementById('access_database-password').value,
+                        keyfile: document.getElementById('access_database-keyfile').value
+                    });
+                } else if (selection === 'cancel') {
+                    resolve();
+                }
+
+                if (!!this.modal) {
+                    this.modal.close();
+                }
+            });
+        };
+    }
 }

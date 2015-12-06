@@ -1,6 +1,9 @@
 import log from 'loglevel';
 import { sanitizeDb, getString } from './keepass_walker';
 
+function remember() {
+    return window.global.remember;
+}
 export default class KeepassIoBridge {
 
     constructor(keepassio) {
@@ -10,7 +13,7 @@ export default class KeepassIoBridge {
     accessDatabase(password, file) {
         log.debug('Accessing database with', password, file);
         new Promise((resolve, reject) => {
-            setTimeout(resolve, 100000);
+            setTimeout(resolve, remember().timeout());
         }).then(()=> {
             log.debug('Clearing');
             delete this.password;
@@ -26,17 +29,21 @@ export default class KeepassIoBridge {
     _loadAsync(withRawDatabase) {
         return new Promise((resolve, reject) => {
             try {
-                var db = new this.kpio.Database();
+                let db = new this.kpio.Database();
+                let dbpath = this.dbpath;
+
                 log.debug('adding credential ', this.password);
                 db.addCredential(new this.kpio.Credentials.Password(this.password));
-                log.debug('loading file ', this.dbpath);
+                log.debug('loading file ', dbpath);
                 // db.addCredential(new this.kpio.Credentials.Keyfile('apoc.key'));
-                db.loadFile(this.dbpath, (err) => {
+                db.loadFile(dbpath, (err) => {
                     if (err) {
                         log.debug('Sending the error onward', err);
                         reject(err);
                     }
                     resolve(withRawDatabase(db.getRawApi().get().KeePassFile));
+
+                    remember().lastAccessedFile(dbpath);
                 });
             } catch (err) {
                 reject(err);

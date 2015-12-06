@@ -11,6 +11,7 @@ export default class GroupTree extends events.EventEmitter {
         this.setupEvents();
 
         Mark.includes.groupTree = `
+        {{if Group}}
         <ul class="nav nav-pills nav-stacked">
         {{Group}}
             <li class="group" data-UUID="{{UUID}}">
@@ -18,12 +19,11 @@ export default class GroupTree extends events.EventEmitter {
                     <span class="icon-number-{{IconID}}"></span>
                     <span>{{Name}}</span>
                 </a>
-                {{if Group}}
-                    {{groupTree}}
-                {{/if}}
+                {{groupTree}}
             </li>
         {{/Group}}
         </ul>
+        {{/if}}
         `;
     }
 
@@ -39,12 +39,11 @@ export default class GroupTree extends events.EventEmitter {
         });
     }
 
-    show(groups) {
-        var self = this;
-        if (!groups) {
-            return;
-        }
+    hide() {
+        this.show();
+    }
 
-        self.element.innerHTML = Mark.up('{{groupTree}}', {Group: groups});
+    show(groups) {
+        this.element.innerHTML = Mark.up('{{groupTree}}', {Group: groups});
     }
 }

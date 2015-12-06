@@ -14,7 +14,7 @@ export default class MainView {
             log.debug('Group', uuid);
             keepassBridge.getGroupEntries(uuid)
                     .then(entries => entryList.show(entries))
-                    .catch(this.handleErrors.bind(this));
+                    .catch(err => this.handleErrors(err));
         });
 
         entryList.on('navigate', function (uuid) {
@@ -25,7 +25,13 @@ export default class MainView {
             log.debug('Reloading database');
             keepassBridge.getDatabaseGroups()
                     .then(groups => groupTree.show(groups))
-                    .catch(this.handleErrors.bind(this));
+                    .catch(err => this.handleErrors(err));
+        });
+
+        document.addEventListener('missing-credentials', () => {
+            log.debug('hiding all incriminating information');
+            entryList.hide();
+            groupTree.hide();
         });
 
         document.addEventListener('copy-password-of-active-entry', () => {
@@ -36,7 +42,7 @@ export default class MainView {
                             electronClipboard.writeText(password);
                         }
                     })
-                    .catch(this.handleErrors.bind(this));
+                    .catch(err => this.handleErrors(err));
         });
 
         document.addEventListener('copy-username-of-active-entry', () => {
@@ -80,8 +86,12 @@ export default class MainView {
 
     getFileAndCredentials(errors) {
         new AccessDatabase(errors)
-                .then(({password: password, dbfile: file}) => {
-                    triggerEvent('password-for-database-set', {password: password, dbfile: file});
-                })
+                .then((info) => {
+                    if (!!info) {
+                        triggerEvent('password-for-database-set', info);
+                    } else {
+                        triggerEvent('missing-credentials');
+                    }
+                }).catch(log.error.bind(log));
     }
 }

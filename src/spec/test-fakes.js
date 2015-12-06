@@ -2,6 +2,12 @@ require('chai')
         .use(require('chai-as-promised'))
         .use(require('sinon-chai'));
 
+window.remember = {
+    timeout: () => {
+    }
+}
+;
+
 function createMouseEvent(eventName) {
     if (!window.HTMLElement.prototype[eventName]) {
         window.HTMLElement.prototype[eventName] = function () {

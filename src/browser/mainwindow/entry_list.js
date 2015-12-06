@@ -11,6 +11,7 @@ export default class EntryList extends events.EventEmitter {
         this.setupEvents();
 
         this.template = `
+        {{if entries}}
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -36,6 +37,7 @@ export default class EntryList extends events.EventEmitter {
             {{/entries}}
             </tbody>
         </table>
+        {{/if}}
         `;
     }
 
@@ -61,11 +63,11 @@ export default class EntryList extends events.EventEmitter {
         });
     }
 
-    show(entries) {
-        if (!entries) {
-            entries = [];
-        }
+    hide() {
+        this.show([]);
+    }
 
+    show(entries) {
         this.element.innerHTML = Mark.up(this.template, {entries: entries});
     }
 
