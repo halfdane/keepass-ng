@@ -6,56 +6,29 @@ function remember() {
 }
 export default class KeepassIoBridge {
 
-    constructor(keepassio) {
-        this.kpio = keepassio;
+    constructor(kpioPromiseFactory) {
+        this.kpioPromiseFactory = kpioPromiseFactory;
+        this.accessDatabase({});
     }
 
-    accessDatabase(password, file) {
-        log.debug('Accessing database with', password, file);
-        new Promise((resolve, reject) => {
+    accessDatabase(info) {
+        log.debug('Accessing database with');
+        new Promise(resolve => {
             setTimeout(resolve, remember().timeout());
         }).then(()=> {
             log.debug('Clearing');
-            delete this.password;
-            delete this.dbpath;
-            delete this.dbPromise;
+            delete this.incriminating;
+            this.incriminating = {};
         });
 
-        this.password = password;
-        this.dbpath = file;
-        delete this.dbPromise;
-    }
-
-    _loadAsync(withRawDatabase) {
-        return new Promise((resolve, reject) => {
-            try {
-                let db = new this.kpio.Database();
-                let dbpath = this.dbpath;
-
-                log.debug('adding credential ', this.password);
-                db.addCredential(new this.kpio.Credentials.Password(this.password));
-                log.debug('loading file ', dbpath);
-                // db.addCredential(new this.kpio.Credentials.Keyfile('apoc.key'));
-                db.loadFile(dbpath, (err) => {
-                    if (err) {
-                        log.debug('Sending the error onward', err);
-                        reject(err);
-                    }
-                    resolve(withRawDatabase(db.getRawApi().get().KeePassFile));
-
-                    remember().lastAccessedFile(dbpath);
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
+        this.incriminating = info;
     }
 
     getDatabase() {
-        if (!this.dbPromise) {
-            this.dbPromise = this._loadAsync(sanitizeDb);
+        if (!this.incriminating.dbPromise) {
+            this.incriminating.dbPromise = this.kpioPromiseFactory(this.incriminating, sanitizeDb);
         }
-        return this.dbPromise;
+        return this.incriminating.dbPromise;
     }
 
     getDatabaseGroups() {
@@ -72,6 +45,6 @@ export default class KeepassIoBridge {
 
     getPassword(entryId) {
         log.debug('Trying to access database password of entry', entryId);
-        return this._loadAsync(getString(entryId, 'Password'));
+        return this.kpioPromiseFactory(this.incriminating, getString(entryId, 'Password'));
     }
 }

@@ -12,6 +12,32 @@ const AppMenu = require('./native/menu.js');
 
 require('./sprites_css.js');
 
+const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile: keyfile}, afterLoaded) {
+    return new Promise((resolve, reject) => {
+        try {
+            let db = new keepassIo.Database();
+            if (!!password) {
+                db.addCredential(new keepassIo.Credentials.Password(password));
+            }
+            if (!!keyfile) {
+                db.addCredential(new keepassIo.Credentials.Keyfile(keyfile));
+            }
+            log.debug('loading file ', dbfile);
+            db.loadFile(dbfile, (err) => {
+                if (err) {
+                    log.debug('Sending the error onward', err);
+                    reject(err);
+                }
+                resolve(afterLoaded(db.getRawApi().get().KeePassFile));
+
+                remember.lastAccessedFile(dbfile);
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     //TODO: make configurable
     log.setLevel(log.levels.DEBUG);
@@ -19,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.global.remember = remember;
 
-    //TODO: create promise or function that can be easily mocked instead of keepassIo
-    const keepassBridge = new KeepassBridge(keepassIo);
+    const keepassBridge = new KeepassBridge(keepassIoPromise);
     new Mainview(electron.clipboard, keepassBridge);
 });
 

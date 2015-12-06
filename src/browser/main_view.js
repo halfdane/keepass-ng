@@ -54,7 +54,7 @@ export default class MainView {
 
         document.addEventListener('password-for-database-set', event => {
             log.debug('setting password');
-            keepassBridge.accessDatabase(event.detail.password, event.detail.dbfile);
+            keepassBridge.accessDatabase(event.detail);
             triggerEvent('reload-database');
         });
 
