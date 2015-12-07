@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import log from 'loglevel';
 
 function valuesOf(elementOrArray) {
     if (!!elementOrArray) {
@@ -7,7 +8,11 @@ function valuesOf(elementOrArray) {
     return [];
 }
 
-function* collectEntries(db) {
+function* collectEntries(db, onlyIfSearchingEnabled = false) {
+    if (onlyIfSearchingEnabled && !!db.EnableSearching && db.EnableSearching === 'false') {
+        return;
+    }
+
     for (let entry of valuesOf(db.Entry)) {
         yield {groupId: db.UUID, entry: entry};
     }
@@ -39,20 +44,20 @@ function objectToTuple({Key: key, Value: value}) {
     return [key, value];
 }
 
-export function sanitizeDb(database, LOG = () => {
-}) {
+export function sanitizeDb(database) {
+    log.debug(database);
     return new Promise((resolve, reject) => {
         try {
+            database = database.KeePassFile || database;
             let entriesToGroupId = new Map();
-            let copy = (JSON.parse(JSON.stringify(database.KeePassFile || database)));
 
-            for (let {groupId: groupId, entry: entry} of collectEntries(copy)) {
+            for (let {groupId: groupId, entry: entry} of collectEntries(database)) {
 
                 if (!!entry.String) {
                     entry.String = new Map(
                             entry.String.filter(onlyUnprotected)
                                     .map(objectToTuple));
-                    LOG(entry.UUID, typeof entry.String.get);
+                    log.debug(entry.UUID, typeof entry.String.get);
                 }
 
                 if (!entriesToGroupId.has(groupId)) {
@@ -60,15 +65,14 @@ export function sanitizeDb(database, LOG = () => {
                 }
                 entriesToGroupId.get(groupId).push(entry);
             }
-            resolve({database: copy, entriesToGroupId: entriesToGroupId});
+            resolve({database: database, entriesToGroupId: entriesToGroupId});
         } catch (err) {
             reject(err);
         }
     });
 }
 
-export function getString(uuid, fieldname, LOG = ()=> {
-}) {
+export function getString(uuid, fieldname) {
     return database => {
         return new Promise((resolve, reject) => {
             try {
@@ -84,4 +88,34 @@ export function getString(uuid, fieldname, LOG = ()=> {
             }
         });
     };
+}
+
+export function matches(searchString) {
+    return function*(database) {
+        const regExp = new RegExp(`.*${searchString}.*`, 'i');
+        for (let {entry: entry} of collectEntries(database.KeePassFile || database, true)) {
+            if (!!entry.String) {
+                log.debug(entry.String);
+                const unprotectedStrings = entry.String.filter(onlyUnprotected);
+                let strings =
+                        unprotectedStrings
+                                .filter(({Key: key, Value: value}) => regExp.test(key) || regExp.test(value));
+
+                const entryMatches =
+                                strings.length > 0
+                                || regExp.test(entry.Tags)
+                                || regExp.test(entry.Tags)
+                        ;
+                if (entryMatches) {
+                    entry.String = new Map(
+                            unprotectedStrings
+                                    .map(objectToTuple));
+
+                    log.debug('Found matching entry: ', entry);
+                    yield entry;
+                }
+            }
+
+        }
+    }
 }

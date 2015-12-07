@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 describe('Protoype experiment', () => {
 
     class somethingWithAFunction {
@@ -85,14 +87,14 @@ describe('Protoype experiment', () => {
 
         class SomeHandlingThingie {
             handle(errorOrFunction) {
-                console.log('Orig');
+                log.debug('Orig');
                 if (isFunction(errorOrFunction)) {
-                    console.log('Orig: its a function. calling it');
+                    log.debug('Orig: its a function. calling it');
                     const retval = errorOrFunction('hello from the original');
-                    console.log('Orig: returning', retval);
+                    log.debug('Orig: returning', retval);
                     return retval;
                 } else {
-                    console.log('Orig: No function. Returning it directly', errorOrFunction);
+                    log.debug('Orig: No function. Returning it directly', errorOrFunction);
                     return errorOrFunction;
                 }
             }
@@ -101,15 +103,15 @@ describe('Protoype experiment', () => {
         let orig = SomeHandlingThingie.prototype.handle;
         SomeHandlingThingie.prototype.handle = function (errorOrFunction) {
             var fn = this;
-            console.log('Wrapper');
+            log.debug('Wrapper');
             if (!isFunction(errorOrFunction)) {
-                console.log('Wrapper: not a function. Logging.');
+                log.debug('Wrapper: not a function. Logging.');
                 loggerFunction(errorOrFunction);
-                console.log('Wrapper: not a function. Done Logging.');
+                log.debug('Wrapper: not a function. Done Logging.');
             }
-            console.log('Wrapper: Calling original');
+            log.debug('Wrapper: Calling original');
             const retval = orig.apply(this, arguments);
-            console.log('Wrapper: returning', retval);
+            log.debug('Wrapper: returning', retval);
             return retval;
         };
 

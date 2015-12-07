@@ -263,7 +263,7 @@
               "IsExpanded": "True",
               "DefaultAutoTypeSequence": "{TAB} {ENTER} {UP} {DOWN} {",
               "EnableAutoType": "null",
-              "EnableSearching": "null",
+              "EnableSearching": "true",
               "LastTopVisibleEntry": "kGrsiQCqAkeTpaguAP8s4Q==",
               "Entry": {
                 "UUID": "kGrsiQCqAkeTpaguAP8s4Q==",
