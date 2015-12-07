@@ -7,17 +7,16 @@ ul.nav ul {
 }
 
 #groups {
-    float: left;
     width: 30%;
-    padding-left: 2px;
-    padding-right: 2px;
     overflow-x: auto;
+    display: inline-block;
 }
 
 #entries {
-    float: left;
-    width: 70%;
+    width: 69%;
     overflow-x: auto;
+    display: inline-block;
+    vertical-align: top;
 }
 
 /* enables CSS3 transition for simple collapses, accordion and also navbar in responsive view */

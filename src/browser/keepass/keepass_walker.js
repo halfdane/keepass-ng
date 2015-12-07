@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import log from 'loglevel';
 
 function valuesOf(elementOrArray) {

@@ -1,7 +1,7 @@
 import events from 'events';
 import log from 'loglevel';
 
-import './../event/event_delegation.js';
+import './event_delegation.js';
 
 var Mark = require('markup-js');
 

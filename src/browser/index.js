@@ -6,11 +6,11 @@ import remember from './settings';
 import AppMenu from './menu.js';
 
 import KeepassBridge from './keepass/keepass_io_bridge';
-import Mainview from './main_view';
+import Mainview from './dom/main_view';
 
 import keepassIo from 'keepass.io';
 
-require('./sprites_css.js');
+require('./dom/sprites_css.js');
 
 const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile: keyfile}, afterLoaded) {
     return new Promise((resolve, reject) => {

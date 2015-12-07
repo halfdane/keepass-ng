@@ -5,13 +5,22 @@
     <title>KeePass-NG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="lib/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/keepass.css" rel="stylesheet">
+
+    <script src="lib/babel-polyfilll/polyfill.min.js"></script>
+    <script src="lib/bootstrap.native/bootstrap-native.js"></script>
+    <script type="text/javascript" src="dom/components/date_widget.js"></script>
+    <script type="text/javascript" src="dom/components/search-box.js"></script>
 </head>
 <body>
-<div class="well" id="groups"></div>
-<div id="entries"></div>
 
-<script src="lib/bootstrap.native/bootstrap-native.js"></script>
-<link href="styles/keepass.css" rel="stylesheet">
+<halfdane-searchbox></halfdane-searchbox>
+<div>
+    <div class="well" id="groups"></div>
+    <div id="entries"></div>
+</div>
+<date-widget theme="green"></date-widget>
+
 
 <script type="text/javascript" src="index.js"></script>
 

@@ -38,8 +38,9 @@ npm start
 - ~~timeout for cached password and data~~
 - ~~remember last opened file~~
 - add search functionality honoring the `protected` and `no-search` fields of entries
-- autocomplete for search
 - make search available via global shortcut
+- obfuscate masterpassword and protected fields from database with something - p.e. the session
+- autocomplete for search
 - automatically type into passwd-fields (p.e. using xdotools?) 
 - edit and save entries
 - edit and save groups

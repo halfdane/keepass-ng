@@ -1,14 +1,24 @@
 import log from 'loglevel';
 
-import triggerEvent from './event/trigger';
-import GroupTree  from './dom/group_tree';
-import EntryList from './dom/entry_list';
+const triggerEvent = require('./trigger').triggerEvent;
+import GroupTree  from './group_tree';
+import EntryList from './entry_list';
 
 import AccessDatabase from './prompts/access_database';
 
 export default class MainView {
 
-    constructor(electronClipboard, keepassBridge, groupTree = new GroupTree(), entryList = new EntryList()) {
+    constructor(electronClipboard, keepassBridge,
+                groupTree = new GroupTree(),
+                entryList = new EntryList()) {
+
+        for (let searchbox of document.getElementsByTagName('halfdane-searchbox')) {
+            searchbox.addEventListener('search', (event) => {
+                keepassBridge.findMatches(event.detail.term)
+                        .then(entries => entryList.show(Array.from(entries)))
+                        .catch(this.handleErrors.bind(this));
+            });
+        }
 
         groupTree.on('navigate', uuid => {
             log.debug('Group', uuid);
@@ -66,9 +76,11 @@ export default class MainView {
         document.addEventListener('password-for-database-set', event => {
             log.debug('setting password');
             keepassBridge.accessDatabase(event.detail);
+            console.log(require('./trigger'));
             triggerEvent('reload-database');
         });
 
+        console.log(require('./trigger'));
         triggerEvent('reload-database');
     }
 
