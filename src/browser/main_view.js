@@ -1,9 +1,8 @@
 import log from 'loglevel';
-import 'babel-polyfill';
 
 import triggerEvent from './event/trigger';
-import GroupTree  from './mainwindow/group_tree';
-import EntryList from './mainwindow/entry_list';
+import GroupTree  from './dom/group_tree';
+import EntryList from './dom/entry_list';
 
 import AccessDatabase from './prompts/access_database';
 
@@ -18,9 +17,20 @@ export default class MainView {
                     .catch(this.handleErrors.bind(this));
         });
 
+        //groupTree.addEventListener('navigate', uuid => {
+        //    log.debug('Group', uuid);
+        //    keepassBridge.getGroupEntries(uuid)
+        //            .then(entries => entryList.show(entries))
+        //            .catch(this.handleErrors.bind(this));
+        //});
+
         entryList.on('navigate', function (uuid) {
             log.debug('Entry', uuid);
         });
+
+        //entryList.addEventListener('navigate', function (uuid) {
+        //    log.debug('Entry', uuid);
+        //});
 
         document.addEventListener('reload-database', () => {
             log.debug('Reloading database');

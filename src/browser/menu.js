@@ -1,4 +1,4 @@
-import triggerEvent from '../event/trigger';
+import triggerEvent from './event/trigger';
 
 (function () {
     var remote = require('remote');

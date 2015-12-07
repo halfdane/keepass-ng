@@ -1,14 +1,14 @@
 import electron from 'electron';
 import log from 'loglevel';
 
-import remember from './native/settings/settings';
+/* the paths are apparantly a bit off - don't know why */
+import remember from './settings';
+import AppMenu from './menu.js';
 
-import Mainview from './main_view';
 import KeepassBridge from './keepass/keepass_io_bridge';
+import Mainview from './main_view';
 
-//TODO: import
-const keepassIo = require('keepass.io');
-const AppMenu = require('./native/menu.js');
+import keepassIo from 'keepass.io';
 
 require('./sprites_css.js');
 
