@@ -90,11 +90,10 @@ export function getString(uuid, fieldname) {
 }
 
 export function matches(searchString) {
-    return function*(database) {
+    return function* (database) {
         const regExp = new RegExp(`.*${searchString}.*`, 'i');
         for (let {entry: entry} of collectEntries(database.KeePassFile || database, true)) {
             if (!!entry.String) {
-                log.debug(entry.String);
                 const unprotectedStrings = entry.String.filter(onlyUnprotected);
                 let strings =
                         unprotectedStrings

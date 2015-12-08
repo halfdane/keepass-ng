@@ -18,6 +18,23 @@ export default class MainView {
                         .then(entries => entryList.show(Array.from(entries)))
                         .catch(this.handleErrors.bind(this));
             });
+            searchbox.addEventListener('complete', (event) => {
+                let pushTitle = (array, entry) => {
+                    if (!!entry) {
+                        array.push(entry.String.get('Title'));
+                    }
+                };
+                keepassBridge.findMatches(event.detail.term)
+                        .then(entries => {
+                            let suggestions = [];
+                            pushTitle(suggestions, entries.next().value);
+                            pushTitle(suggestions, entries.next().value);
+                            pushTitle(suggestions, entries.next().value);
+                            pushTitle(suggestions, entries.next().value);
+                            event.detail.suggest(suggestions);
+                        })
+                        .catch(this.handleErrors.bind(this));
+            });
         }
 
         groupTree.on('navigate', uuid => {
