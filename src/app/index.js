@@ -33,11 +33,9 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
     application.openWindow();
     globalShortcut.register('Control+Super+K', () => {
-        console.log('Got global username request');
         mainWindow.webContents.send('copy-username-of-active-entry');
     });
     globalShortcut.register('Control+Super+L', () => {
-        console.log('Got global password request');
         mainWindow.webContents.send('copy-password-of-active-entry');
     });
 });

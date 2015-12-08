@@ -1,17 +1,12 @@
-import events from 'events';
-import './event_delegation.js';
+(function () {
 
-const Mark = require('markup-js');
-const log = require('loglevel');
+    const Mark = require('markup-js');
+    const log = require('loglevel');
+    const events = require('events');
 
-export default class EntryList extends events.EventEmitter {
+    require('./event_delegation.js');
 
-    constructor(domElement = document.getElementById('entries')) {
-        super();
-        this.element = domElement;
-        this.setupEvents();
-
-        this.template = `
+    const template = `
         {{if entries}}
         <table class="table table-striped table-hover">
             <thead>
@@ -40,44 +35,50 @@ export default class EntryList extends events.EventEmitter {
         </table>
         {{/if}}
         `;
+
+    module.exports = class EntryList extends events.EventEmitter {
+        constructor(domElement = document.getElementById('entries')) {
+            super();
+            this.element = domElement;
+            this.setupEvents();
+        }
+
+        setupEvents() {
+            this.element.addEventListener('click', e => {
+                [].forEach.call(this.element.getElementsByClassName('info'),
+                        el => el.classList.remove('info'));
+
+                e.parent('.entry', p => p.classList.add('info'));
+                e.stopPropagation();
+            });
+
+            this.element.addEventListener('dblclick', event => {
+                event.parent('.entry',
+                        e => this.emit('navigate', e.getAttribute('data-UUID')));
+                event.stopPropagation();
+            });
+        }
+
+        hide() {
+            this.show([]);
+        }
+
+        show(entries) {
+            this.element.innerHTML = Mark.up(template, {entries: entries});
+        }
+
+        getIdOfActiveEntry() {
+            return new Promise(resolve => {
+                resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-UUID'));
+            });
+        }
+
+        getUsernameOfActiveEntry() {
+            return new Promise(resolve => {
+                resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-username'));
+            });
+        }
     }
 
-    setupEvents() {
-        // Click on blank
-        this.element.parentNode.addEventListener('click', () => {
-            [].forEach.call(this.element.getElementsByClassName('info'),
-                    el => el.classList.remove('info'));
-        });
-
-        this.element.addEventListener('click', e => {
-            [].forEach.call(this.element.getElementsByClassName('info'),
-                    el => el.classList.remove('info'));
-
-            e.parent('.entry', p => p.classList.add('info'));
-            e.stopPropagation();
-        });
-
-        this.element.addEventListener('dblclick', event => {
-            event.parent('.entry',
-                    e => this.emit('navigate', e.getAttribute('data-UUID')));
-            event.stopPropagation();
-        });
-    }
-
-    hide() {
-        this.show([]);
-    }
-
-    show(entries) {
-        this.element.innerHTML = Mark.up(this.template, {entries: entries});
-    }
-
-    getIdOfActiveEntry() {
-        return this.element.getElementsByClassName('info').item(0).getAttribute('data-UUID');
-    }
-
-    getUsernameOfActiveEntry() {
-        return this.element.getElementsByClassName('info').item(0).getAttribute('data-username');
-    }
-}
+})();
 

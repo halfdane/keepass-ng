@@ -39,12 +39,12 @@ npm start
 - ~~remember last opened file~~
 - ~~add search functionality honoring the `protected` and `no-search` fields of entries~~
 - make search available via global shortcut
-- obfuscate masterpassword and protected fields from database with something - p.e. the session
+- obfuscate masterpassword and protected fields from database with something - p.e. or so
 - ~~autocomplete for search~~
-- automatically type into passwd-fields (p.e. using xdotools?) 
 - edit and save entries
 - edit and save groups
 - edit database
+- automatically type into passwd-fields (p.e. using xdotools?) 
 
 
 ## Code inspired by:

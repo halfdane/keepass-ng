@@ -65,15 +65,17 @@ export default class MainView {
 
         document.addEventListener('copy-password-of-active-entry', () => {
             log.debug('Copying active password');
-            var entryId = entryList.getIdOfActiveEntry();
-            keepassBridge.getPassword(entryId)
+            entryList.getIdOfActiveEntry()
+                    .then(keepassBridge.getPassword)
                     .then(electronClipboard.writeText)
                     .catch(this.handleErrors.bind(this));
         });
 
         document.addEventListener('copy-username-of-active-entry', () => {
             log.debug('Copying active username');
-            electronClipboard.writeText(entryList.getUsernameOfActiveEntry() || '');
+            entryList.getUsernameOfActiveEntry()
+                    .then(electronClipboard.writeText)
+                    .catch(this.handleErrors.bind(this));
         });
 
         document.addEventListener('password-for-database-set', event => {
