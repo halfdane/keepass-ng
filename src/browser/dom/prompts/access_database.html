@@ -4,14 +4,15 @@
             <div class="modal-header">
                 <h4 class="modal-title">Enter Credentials</h4>
             </div>
-            <div class="modal-body">
-                <p>Since the credentials have a timeout, you'll see this dialog from time to time.</p>
-                <form>
+            <form id="access_database-form">
+                <div class="modal-body">
+                    <p>Please select the database and enter the credentials to access them.</p>
                     <div class="form-group {{errors.dbfile|choose>has-error has-feedback>}}">
                         <label for="access_database-dbfile">Database File</label>
                         <input type="text" class="form-control dbfile" id="access_database-dbfile" placeholder="Database File"
                                value="{{lastAccessedFile}}"
-                               aria-describedby="{{errors.dbfile|choose>inputError2Status>}}">
+                               aria-describedby="{{errors.dbfile|choose>inputError2Status>}}"
+                               autofocus>
                         {{if errors.dbfile}}
                         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
                         <span id="inputError2Status" class="sr-only">{{errors.dbfile|blank>}}</span>
@@ -41,12 +42,12 @@
                         <span id="helpBlock" class="help-block">{{errors.keyfile|blank>}}</span>
                         {{/if}}
                     </div>
-                </form>
-            </div>
-            <div class=" modal-footer">
-                <button id="access_database-cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button id="access_database-okay" type="button" class="btn btn-primary">Ok</button>
-            </div>
+                </div>
+                <div class=" modal-footer">
+                    <button id="access_database-cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="access_database-okay" type="submit" class="btn btn-primary">Ok</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
