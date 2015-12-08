@@ -1,4 +1,4 @@
-import { sanitizeDb, getString, matches } from './keepass_walker';
+import { sanitizeDb, getString, matches, entryWith } from './keepass_walker';
 import log from 'loglevel';
 
 export default class KeepassIoBridge {
@@ -30,37 +30,30 @@ export default class KeepassIoBridge {
         return this.incriminating.dbPromise;
     }
 
-    /**
-     * the database tree - especially the groups, too.
-     */
     getDatabaseGroups() {
         log.debug('Trying to access database for groups');
         return this.getDatabase()
                 .then(({database: database}) => database.Root.Group);
     }
 
-    /**
-     * an array of entries that are in the given groupId
-     */
     getGroupEntries(groupId) {
         log.debug('Trying to access database for entries of group', groupId);
         return this.getDatabase()
                 .then(({entriesToGroupId: entriesToGroupId}) => entriesToGroupId.get(groupId));
     }
 
-    /**
-     * Plaintext password of given entry
-     */
     getPassword(entryId) {
         log.debug('Trying to access database password of entry', entryId);
         return this.kpioPromiseFactory(this.incriminating, getString(entryId, 'Password'));
     }
 
-    /**
-     * iterator over entries that match the given string
-     */
-    findMatches(searchString) {
-        log.debug('Searching for entries that match', searchString);
-        return this.kpioPromiseFactory(this.incriminating, matches(searchString));
+    findMatches(searchString, max) {
+        log.debug(`Searching for maximum ${max} entries that match ${searchString}`);
+        return this.kpioPromiseFactory(this.incriminating, matches(searchString, max));
+    }
+
+    getEntry(uuid) {
+        log.debug(`Searching for entry with uuid ${uuid}`);
+        return this.kpioPromiseFactory(this.incriminating, entryWith(uuid));
     }
 }

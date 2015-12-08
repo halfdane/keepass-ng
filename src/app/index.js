@@ -32,16 +32,18 @@ app.on('window-all-closed', () => {
 
 app.on('ready', () => {
     application.openWindow();
-    globalShortcut.register('Control+Super+X', () => {
+    globalShortcut.register('Control+Super+K', () => {
         console.log('Got global username request');
+        mainWindow.webContents.send('copy-username-of-active-entry');
     });
-    globalShortcut.register('Control+Super+C', () => {
+    globalShortcut.register('Control+Super+L', () => {
         console.log('Got global password request');
+        mainWindow.webContents.send('copy-password-of-active-entry');
     });
 });
 app.on('will-quit', () => {
-    globalShortcut.unregister('Control+Super+X');
-    globalShortcut.unregister('Control+Super+C');
+    globalShortcut.unregister('Control+Super+K');
+    globalShortcut.unregister('Control+Super+L');
     globalShortcut.unregisterAll();
 });
 

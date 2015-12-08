@@ -1,6 +1,5 @@
 import log from 'loglevel';
 
-const triggerEvent = require('./trigger').triggerEvent;
 import GroupTree  from './group_tree';
 import EntryList from './entry_list';
 
@@ -12,30 +11,22 @@ export default class MainView {
                 groupTree = new GroupTree(),
                 entryList = new EntryList()) {
 
-        for (let searchbox of document.getElementsByTagName('halfdane-searchbox')) {
-            searchbox.addEventListener('search', (event) => {
-                keepassBridge.findMatches(event.detail.term)
-                        .then(entries => entryList.show(Array.from(entries)))
-                        .catch(this.handleErrors.bind(this));
-            });
-            searchbox.addEventListener('complete', (event) => {
-                let pushTitle = (array, entry) => {
-                    if (!!entry) {
-                        array.push(entry.String.get('Title'));
-                    }
-                };
-                keepassBridge.findMatches(event.detail.term)
-                        .then(entries => {
-                            let suggestions = [];
-                            pushTitle(suggestions, entries.next().value);
-                            pushTitle(suggestions, entries.next().value);
-                            pushTitle(suggestions, entries.next().value);
-                            pushTitle(suggestions, entries.next().value);
-                            event.detail.suggest(suggestions);
-                        })
-                        .catch(this.handleErrors.bind(this));
-            });
-        }
+        let searchbox = document.getElementById('search-entries');
+        searchbox.addEventListener('search', (event) => {
+            keepassBridge.findMatches(event.detail.term)
+                    .then(entries => entryList.show(entries))
+                    .catch(this.handleErrors.bind(this));
+        });
+        searchbox.addEventListener('display-entry', (event) => {
+            keepassBridge.getEntry(event.detail.entry)
+                    .then(entry => entryList.show([entry]))
+                    .catch(this.handleErrors.bind(this));
+        });
+        searchbox.addEventListener('complete-entries', (event) => {
+            keepassBridge.findMatches(event.detail.term, 5)
+                    .then(entries => event.detail.suggest(entries))
+                    .catch(this.handleErrors.bind(this));
+        });
 
         groupTree.on('navigate', uuid => {
             log.debug('Group', uuid);
@@ -73,32 +64,26 @@ export default class MainView {
         });
 
         document.addEventListener('copy-password-of-active-entry', () => {
+            log.debug('Copying active password');
             var entryId = entryList.getIdOfActiveEntry();
             keepassBridge.getPassword(entryId)
-                    .then(password => {
-                        if (!!password) {
-                            electronClipboard.writeText(password);
-                        }
-                    })
+                    .then(electronClipboard.writeText)
                     .catch(this.handleErrors.bind(this));
         });
 
         document.addEventListener('copy-username-of-active-entry', () => {
-            var username = entryList.getUsernameOfActiveEntry();
-            if (!!username) {
-                electronClipboard.writeText(username);
-            }
+            log.debug('Copying active username');
+            electronClipboard.writeText(entryList.getUsernameOfActiveEntry() || '');
         });
 
         document.addEventListener('password-for-database-set', event => {
             log.debug('setting password');
             keepassBridge.accessDatabase(event.detail);
             console.log(require('./trigger'));
-            triggerEvent('reload-database');
+            document.dispatchEvent(new CustomEvent('reload-database'));
         });
 
-        console.log(require('./trigger'));
-        triggerEvent('reload-database');
+        document.dispatchEvent(new CustomEvent('reload-database'));
     }
 
     handleErrors(err) {
@@ -127,9 +112,9 @@ export default class MainView {
         new AccessDatabase(errors)
                 .then((info) => {
                     if (!!info) {
-                        triggerEvent('password-for-database-set', info);
+                        document.dispatchEvent(new CustomEvent('password-for-database-set', {detail: info}));
                     } else {
-                        triggerEvent('missing-credentials');
+                        document.dispatchEvent(new CustomEvent('missing-credentials'));
                     }
                 }).catch(log.error.bind(log));
     }

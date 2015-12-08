@@ -1,7 +1,6 @@
 import electron from 'electron';
 import log from 'loglevel';
 
-/* the paths are apparantly a bit off - don't know why */
 import remember from './settings';
 import AppMenu from './menu.js';
 
@@ -10,6 +9,7 @@ import Mainview from './dom/main_view';
 
 import keepassIo from 'keepass.io';
 
+const ipcRenderer = electron.ipcRenderer;
 require('./dom/sprites_css.js');
 
 const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile: keyfile}, afterLoaded) {
@@ -44,6 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
     new AppMenu();
 
     window.global.remember = remember;
+
+    ipcRenderer.on('copy-username-of-active-entry', function() {
+        document.dispatchEvent(new CustomEvent('copy-username-of-active-entry'));
+    });
+
+    ipcRenderer.on('copy-password-of-active-entry', function() {
+        document.dispatchEvent(new CustomEvent('copy-password-of-active-entry'));
+    });
 
     const keepassBridge = new KeepassBridge(keepassIoPromise, remember.timeout);
     new Mainview(electron.clipboard, keepassBridge);

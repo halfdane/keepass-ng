@@ -71,8 +71,29 @@ export function sanitizeDb(database) {
     });
 }
 
+export function entryWith(uuid) {
+    return database => {
+        return new Promise((resolve, reject) => {
+            try {
+                for (let {entry: entry} of collectEntries(database.KeePassFile || database)) {
+                    if (entry.UUID === uuid) {
+                        entry.String = new Map(
+                                entry.String.filter(onlyUnprotected)
+                                        .map(objectToTuple));
+                        resolve(entry);
+                    }
+                }
+                reject(new Error(`Could not find entry ${uuid}`));
+            } catch (err) {
+                reject(err);
+            }
+        });
+    };
+}
+
 export function getString(uuid, fieldname) {
     return database => {
+        log.debug(`Trying to find value of ${fieldname} for entry ${uuid}`);
         return new Promise((resolve, reject) => {
             try {
                 for (let {entry: entry} of collectEntries(database.KeePassFile || database)) {
@@ -89,31 +110,35 @@ export function getString(uuid, fieldname) {
     };
 }
 
-export function matches(searchString) {
-    return function* (database) {
+export function matches(searchString, max) {
+    return function (database) {
         const regExp = new RegExp(`.*${searchString}.*`, 'i');
+        let matches = [];
         for (let {entry: entry} of collectEntries(database.KeePassFile || database, true)) {
-            if (!!entry.String) {
-                const unprotectedStrings = entry.String.filter(onlyUnprotected);
-                let strings =
+            if (!entry.String) {
+                continue;
+            }
+            const unprotectedStrings = entry.String.filter(onlyUnprotected);
+            let strings =
+                    unprotectedStrings
+                            .filter(({Key: key, Value: value}) => regExp.test(key) || regExp.test(value));
+
+            const entryMatches =
+                    strings.length > 0
+                    || regExp.test(entry.Tags)
+                    || regExp.test(entry.Tags);
+            if (entryMatches) {
+                entry.String = new Map(
                         unprotectedStrings
-                                .filter(({Key: key, Value: value}) => regExp.test(key) || regExp.test(value));
+                                .map(objectToTuple));
 
-                const entryMatches =
-                                strings.length > 0
-                                || regExp.test(entry.Tags)
-                                || regExp.test(entry.Tags)
-                        ;
-                if (entryMatches) {
-                    entry.String = new Map(
-                            unprotectedStrings
-                                    .map(objectToTuple));
-
-                    log.debug('Found matching entry: ', entry);
-                    yield entry;
+                log.debug('Found matching entry: ', entry);
+                matches.push(entry);
+                if (!!max && matches.length >= max) {
+                    break;
                 }
             }
-
         }
+        return matches;
     }
 }

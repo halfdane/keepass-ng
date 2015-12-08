@@ -1,7 +1,8 @@
 import events from 'events';
 import './event_delegation.js';
 
-var Mark = require('markup-js');
+const Mark = require('markup-js');
+const log = require('loglevel');
 
 export default class EntryList extends events.EventEmitter {
 
@@ -24,7 +25,7 @@ export default class EntryList extends events.EventEmitter {
             </thead>
             <tbody>
             {{entries}}
-                <tr class="entry" data-UUID="{{UUID}}" data-username="{{String|call>get>UserName|blank>}}">
+                <tr class="entry{{if #|first}} info{{/if}}" data-UUID="{{UUID}}" data-username="{{String|call>get>UserName|blank>}}">
                     <td>
                         <span class="icon-number-{{IconID}}"></span>
                         <span>{{String|call>get>Title|blank>}}</span>
@@ -72,13 +73,11 @@ export default class EntryList extends events.EventEmitter {
     }
 
     getIdOfActiveEntry() {
-        var self = this;
-        return self.element.getElementsByClassName('info').item(0).getAttribute('data-UUID');
+        return this.element.getElementsByClassName('info').item(0).getAttribute('data-UUID');
     }
 
     getUsernameOfActiveEntry() {
-        var self = this;
-        return self.element.getElementsByClassName('info').item(0).getAttribute('data-username');
+        return this.element.getElementsByClassName('info').item(0).getAttribute('data-username');
     }
 }
 
