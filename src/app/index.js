@@ -2,42 +2,18 @@ import electron from 'electron';
 import BrowserWindow from 'browser-window';
 
 const app = electron.app;
-
 const application = {};
+const globalShortcut = electron.globalShortcut;
 
 var mainWindow = null;
 
-/*
-const globalShortcut = electron.globalShortcut;
-var globalShortcutRegister = () => {
-    app.on('ready', () => {
-        globalShortcut.register('CmdOrCtrl+Alt+M', () => {
-            var win = new BrowserWindow({width: 800, height: 600, frame: true});
-            win.webContents.openDevTools();
-            win.loadURL('file://' + __dirname + '/search.html');
-        });
-    });
+electron.crashReporter.start();
 
-    app.on('will-quit', () => {
-        globalShortcut.unregister('CmdOrCtrl+Alt+M');
-        globalShortcut.unregisterAll();
-    });
-};
-*/
-
-var createBrowserWindow = (windowOptions) => {
+application.createBrowserWindow = (windowOptions) => {
     return new BrowserWindow(windowOptions);
 };
 
-electron.crashReporter.start();
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-var openWindow = () => {
+application.openWindow = () => {
     mainWindow = application.createBrowserWindow({width: 1024, height: 768});
     mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
 
@@ -48,11 +24,25 @@ var openWindow = () => {
     });
 };
 
-app.on('ready', () => {
-    application.openWindow();
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
-application.createBrowserWindow = createBrowserWindow;
-application.openWindow = openWindow;
+app.on('ready', () => {
+    application.openWindow();
+    globalShortcut.register('Control+Super+X', () => {
+        console.log('Got global username request');
+    });
+    globalShortcut.register('Control+Super+C', () => {
+        console.log('Got global password request');
+    });
+});
+app.on('will-quit', () => {
+    globalShortcut.unregister('Control+Super+X');
+    globalShortcut.unregister('Control+Super+C');
+    globalShortcut.unregisterAll();
+});
 
 export default application;
