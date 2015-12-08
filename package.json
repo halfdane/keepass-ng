@@ -26,6 +26,7 @@
     "keepass.io": "^1.1.2",
     "loglevel": "^1.4.0",
     "nconf": "^0.8.2",
+    "onceler": "0.0.5",
     "text": "github:requirejs/text"
   },
   "devDependencies": {

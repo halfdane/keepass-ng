@@ -1,4 +1,6 @@
-import remember from '../../browser/native/settings';
+require('../../browser/lib/babel-polyfilll/polyfill.min');
+
+const remember = require('../../browser/settings');
 global.remember = remember;
 
 var chai = require('chai')

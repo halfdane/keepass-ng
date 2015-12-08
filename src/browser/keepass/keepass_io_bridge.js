@@ -1,59 +1,71 @@
-import { sanitizeDb, getString, matches, entryWith } from './keepass_walker';
-import log from 'loglevel';
+(function () {
 
-export default class KeepassIoBridge {
+    const TOTP = require('onceler').TOTP;
+    const log = require('loglevel');
 
-    constructor(kpioPromiseFactory, timeout) {
-        this.kpioPromiseFactory = kpioPromiseFactory;
-        this.accessDatabase({});
-        this.waitFor = timeout();
-    }
+    const walker = require('./keepass_walker');
+    const sanitizeDb = walker.sanitizeDb;
+    const getString = walker.getString;
+    const matches = walker.matches;
+    const entryWith = walker.entryWith;
 
-    accessDatabase(incriminating) {
-        log.debug('Accessing database');
-        new Promise(resolve => {
-            log.debug('Waiting for', this.waitFor);
-            setTimeout(resolve, this.waitFor);
-        }).then(()=> {
-            log.debug('Clearing data');
-            delete this.incriminating;
-            this.incriminating = {};
-        }).catch(log.error.bind(log));
+    const encrypt = require('./obfuscate').encrypt;
+    const decrypt = require('./obfuscate').decrypt;
 
-        this.incriminating = incriminating;
-    }
-
-    getDatabase() {
-        if (!this.incriminating.dbPromise) {
-            this.incriminating.dbPromise = this.kpioPromiseFactory(this.incriminating, sanitizeDb);
+    module.exports = class KeepassIoBridge {
+        constructor(kpioPromiseFactory, waitFor) {
+            this.kpioPromiseFactory = kpioPromiseFactory;
+            this.totp = new TOTP('TShcN1ZiaD5zUiFJZHdXMGJpdSY=', 12, 3);
+            this.accessDatabase({});
         }
-        return this.incriminating.dbPromise;
-    }
 
-    getDatabaseGroups() {
-        log.debug('Trying to access database for groups');
-        return this.getDatabase()
-                .then(({database: database}) => database.Root.Group);
-    }
+        accessDatabase(incriminating) {
+            this.incriminating = encrypt(this.totp, JSON.stringify(incriminating));
+            delete this.db;
+        }
 
-    getGroupEntries(groupId) {
-        log.debug('Trying to access database for entries of group', groupId);
-        return this.getDatabase()
-                .then(({entriesToGroupId: entriesToGroupId}) => entriesToGroupId.get(groupId));
-    }
+        getDatabase(callback) {
+            if (!this.db) {
+                this.db = this.kpioPromiseFactory(JSON.parse(decrypt(this.totp, this.incriminating)), callback)
+                        .catch(error => {
+                            if (error.message === 'error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt') {
+                                let passwordTimeout = new Error();
+                                passwordTimeout.name = 'PasswordTimeOut';
+                                passwordTimeout.message = 'The password has timed out - provide it again to gain access';
+                                throw passwordTimeout;
+                            } else {
+                                throw error;
+                            }
+                        });
+            }
+            return this.db;
+        }
 
-    getPassword(entryId) {
-        log.debug('Trying to access database password of entry', entryId);
-        return this.kpioPromiseFactory(this.incriminating, getString(entryId, 'Password'));
-    }
+        getDatabaseGroups() {
+            log.debug('Trying to access database for groups');
+            return this.getDatabase(sanitizeDb)
+                    .then(({database: database}) => database.Root.Group);
+        }
 
-    findMatches(searchString, max) {
-        log.debug(`Searching for maximum ${max} entries that match ${searchString}`);
-        return this.kpioPromiseFactory(this.incriminating, matches(searchString, max));
-    }
+        getGroupEntries(groupId) {
+            log.debug('Trying to access database for entries of group', groupId);
+            return this.getDatabase(sanitizeDb)
+                    .then(({entriesToGroupId: entriesToGroupId}) => entriesToGroupId.get(groupId));
+        }
 
-    getEntry(uuid) {
-        log.debug(`Searching for entry with uuid ${uuid}`);
-        return this.kpioPromiseFactory(this.incriminating, entryWith(uuid));
+        getPassword(entryId) {
+            log.debug('Trying to access database password of entry', entryId);
+            return this.getDatabase(getString(entryId, 'Password'))
+        }
+
+        findMatches(searchString, max) {
+            log.debug(`Searching for maximum ${max} entries that match ${searchString}`);
+            return this.getDatabase(matches(searchString, max));
+        }
+
+        getEntry(uuid) {
+            log.debug(`Searching for entry with uuid ${uuid}`);
+            return this.getDatabase(entryWith(searchString, max));
+        }
     }
-}
+})();

@@ -1,7 +1,7 @@
 import { sanitizeDb, getString, matches } from '../../../browser/keepass/keepass_walker';
 import log from 'loglevel';
 
-describe('KeepassTransformer', ()=> {
+describe('KeepassWalker', ()=> {
 
     let testDatabase;
     beforeEach(() => {
@@ -225,49 +225,49 @@ describe('KeepassTransformer', ()=> {
     it('finds entries by strings-value', () => {
         let getMatch = matches('aValue01')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by strings-key', () => {
         let getMatch = matches('aField01')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by substring of strings-value', () => {
         let getMatch = matches('aVa')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by substring of strings-key', () => {
         let getMatch = matches('aFi')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by regexp of strings-value', () => {
         let getMatch = matches('a.*01')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by regexp of strings-key', () => {
         let getMatch = matches('a.*01')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 
     it('finds entries by regexp of tags', () => {
         let getMatch = matches('t.*g2')(testDatabase);
 
-        expect(getMatch.next().value.UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
-        expect(getMatch.next()).to.deep.equal({value: undefined, done: true});
+        expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
+        expect(getMatch.length).to.deep.equal(1);
     });
 });

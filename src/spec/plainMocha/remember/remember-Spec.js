@@ -1,6 +1,6 @@
 import fs from 'fs';
 import log from 'loglevel';
-import remember from '../../../browser/native/settings';
+import remember from '../../../browser/settings';
 
 describe('Remember function', () => {
     const TESTFILE = './test.json';
