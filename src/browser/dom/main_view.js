@@ -27,6 +27,10 @@ export default class MainView {
                     .then(entries => event.detail.suggest(entries))
                     .catch(this.handleErrors.bind(this));
         });
+        document.addEventListener('search-and-activate-entry', event => {
+            log.debug('activating search');
+            searchbox.focus();
+        });
 
         groupTree.on('navigate', uuid => {
             log.debug('Group', uuid);
@@ -66,7 +70,7 @@ export default class MainView {
         document.addEventListener('copy-password-of-active-entry', () => {
             log.debug('Copying active password');
             entryList.getIdOfActiveEntry()
-                    .then(keepassBridge.getPassword)
+                    .then(uuid => keepassBridge.getPassword(uuid))
                     .then(electronClipboard.writeText)
                     .catch(this.handleErrors.bind(this));
         });
@@ -81,7 +85,6 @@ export default class MainView {
         document.addEventListener('password-for-database-set', event => {
             log.debug('setting password');
             keepassBridge.accessDatabase(event.detail);
-            console.log(require('./trigger'));
             document.dispatchEvent(new CustomEvent('reload-database'));
         });
 

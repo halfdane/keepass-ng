@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.global.remember = remember;
 
+    ipcRenderer.on('search-and-activate-entry', function() {
+        document.dispatchEvent(new CustomEvent('search-and-activate-entry'));
+    });
+
     ipcRenderer.on('copy-username-of-active-entry', function() {
         document.dispatchEvent(new CustomEvent('copy-username-of-active-entry'));
     });

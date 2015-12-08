@@ -32,6 +32,10 @@ app.on('window-all-closed', () => {
 
 app.on('ready', () => {
     application.openWindow();
+    globalShortcut.register('Control+Super+J', () => {
+        mainWindow.show();
+        mainWindow.webContents.send('search-and-activate-entry');
+    });
     globalShortcut.register('Control+Super+K', () => {
         mainWindow.webContents.send('copy-username-of-active-entry');
     });

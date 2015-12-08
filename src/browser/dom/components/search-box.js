@@ -8,7 +8,7 @@
     const template = `
     <link href="lib/pixabay-autoComplete/auto-complete.css" rel="stylesheet">
     <form id="searchform">
-        <input id="searchfiels" class="form-control" type="text" placeholder="Search an entry"/>
+        <input class="form-control" type="text" placeholder="Search an entry" tabindex="-1"/>
     </form>
     `;
 
@@ -41,6 +41,11 @@
             this.form.addEventListener('submit', event => {
                 this.dispatchEvent(new CustomEvent('search-entries', {detail: {term: this.input.value}}));
                 event.preventDefault();
+            });
+
+            this.addEventListener('focus', () => {
+                log.debug('Got focus event - passin it on to', this.input);
+                this.input.focus();
             });
         }
     }
