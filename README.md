@@ -1,7 +1,7 @@
 # Keepass-NG
 
-Keepass-NG is currently in pre-alpha and should not be used for anything.
-Most of the useful functions are not implemented yet (see TODO)
+Keepass-NG is currently in alpha and should not be used for serious work.
+Missing functions are tracked as issues.
 
 The goal is to provide a password-manager that can serve as a replacement for keepass2, 
 which doesn't quite fit my workflow.
@@ -11,7 +11,7 @@ which doesn't quite fit my workflow.
 
 - Have a functional desktop-application that can do everything keepass2 can do.
 - Do not expose passwords. 
-    That means passwords (and other protected fields) are not held in memory but only decrypted 
+    That means passwords (and other protected fields) are not held as plaintext in memory but only decrypted 
     and provided when explicitely requested.
 - Use a modern approach to JavaScript with es6 (classes, promises, generators)
 - Try to be test-driven. When that doesn't work, at least have a lot of tests after the fact
@@ -30,21 +30,6 @@ Build the application and run it:
 ```bash
 npm start
 ```
-    
-
-## TODO
-- ~~be able to copy protected data (like passwords) to clipboard~~
-- ~~ask for password and file~~
-- ~~timeout for cached password and data~~
-- ~~remember last opened file~~
-- ~~add search functionality honoring the `protected` and `no-search` fields of entries~~
-- ~~make search available via global shortcut~~
-- obfuscate masterpassword and protected fields from database with something
-- ~~autocomplete for search~~
-- edit and save entries
-- edit and save groups
-- edit database
-- automatically type into passwd-fields (p.e. using xdotools?) 
 
 
 ## Code inspired by:
