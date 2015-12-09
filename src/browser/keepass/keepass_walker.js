@@ -1,128 +1,115 @@
 (function () {
+
     const log = require('loglevel');
     const encrypt = require('./obfuscate').encrypt;
-    const decrypt = require('./obfuscate').decrypt;
 
-    const walker = {};
-
-    function valuesOf(elementOrArray) {
-        if (!!elementOrArray) {
-            return (!!elementOrArray.values ? elementOrArray : [elementOrArray]).values();
+    module.exports = class KeepassWalker {
+        constructor(waitFor) {
+            this.waitFor = waitFor;
         }
-        return [];
-    }
 
-    function protectedToObfuscated(totp) {
-        return ({Key: key, Value: value}) => {
-            if (value && value.$ && value.$.Protected && value.$.Protected === 'True') {
-                value._ = encrypt(totp, value._);
+        _valuesOf(elementOrArray) {
+            if (!!elementOrArray) {
+                return (!!elementOrArray.values ? elementOrArray : [elementOrArray]).values();
             }
-            return {Key: key, Value: value};
-        }
-    }
-
-    function* collectEntries(db, totp, onlyIfSearchingEnabled = false) {
-        if (onlyIfSearchingEnabled && !!db.EnableSearching && db.EnableSearching === 'false') {
-            return;
+            return [];
         }
 
-        for (let entry of valuesOf(db.Entry)) {
-            if (!!entry.String.map) {
-                entry.String = new Map(
-                        entry.String.map(protectedToObfuscated(totp))
-                                .map(objectToTuple));
+        _protectedToObfuscated() {
+            return ({Key: key, Value: value}) => {
+                if (value && value.$ && value.$.Protected && value.$.Protected === 'True') {
+                    value._ = encrypt(this.waitFor(), value._);
+                }
+                return {Key: key, Value: value};
             }
-            yield {groupId: db.UUID, entry: entry};
         }
 
-        for (let root of valuesOf(db.Root)) {
-            yield* collectEntries(root, totp);
+        _objectToTuple({Key: key, Value: value}) {
+            return [key, value];
         }
 
-        for (let group of valuesOf(db.Group)) {
-            yield* collectEntries(group, totp);
-        }
-    }
+        * _collectEntries(db, onlyIfSearchingEnabled = false) {
+            if (onlyIfSearchingEnabled && !!db.EnableSearching && db.EnableSearching === 'false') {
+                return;
+            }
 
-    function objectToTuple({Key: key, Value: value}) {
-        return [key, value];
-    }
-
-    walker.sanitizeDb = function (totp) {
-        return database => {
-            return new Promise((resolve, reject) => {
-                try {
-                    database = database.KeePassFile || database;
-                    let entriesToGroupId = new Map();
-
-                    for (let {groupId: groupId, entry: entry} of collectEntries(database, totp)) {
-                        if (!entriesToGroupId.has(groupId)) {
-                            entriesToGroupId.set(groupId, []);
-                        }
-                        entriesToGroupId.get(groupId).push(entry);
-                    }
-                    resolve({database: database, entriesToGroupId: entriesToGroupId});
-                } catch (err) {
-                    reject(err);
+            for (let entry of this._valuesOf(db.Entry)) {
+                if (!!entry.String.map) {
+                    entry.String = new Map(
+                            entry.String.map(this._protectedToObfuscated())
+                                    .map(this._objectToTuple));
                 }
-            });
-        }
-    };
+                yield {groupId: db.UUID, entry: entry};
+            }
 
-    walker.getString = function (uuid, fieldname, totp) {
-        return database => {
-            return walker.entryWith(uuid, totp)(database)
-                    .then(entry => {
-                        return decrypt(totp, entry.String.get(fieldname)._);
-                    })
-        }
-    };
+            for (let root of this._valuesOf(db.Root)) {
+                yield* this._collectEntries(root, onlyIfSearchingEnabled);
+            }
 
-    walker.entryWith = function (uuid, totp) {
-        return database => {
-            return new Promise((resolve, reject) => {
-                try {
-                    for (let {entry: entry} of collectEntries(database.KeePassFile || database, totp)) {
-                        if (entry.UUID === uuid) {
-                            resolve(entry);
+            for (let group of this._valuesOf(db.Group)) {
+                yield* this._collectEntries(group, onlyIfSearchingEnabled);
+            }
+        }
+
+        getDatabase() {
+            return database => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        database = database.KeePassFile || database;
+                        let entriesToGroupId = new Map();
+
+                        for (let {groupId: groupId, entry: entry} of this._collectEntries(database)) {
+                            if (!entriesToGroupId.has(groupId)) {
+                                entriesToGroupId.set(groupId, []);
+                            }
+                            entriesToGroupId.get(groupId).push(entry);
+                        }
+                        resolve({database: database, entriesToGroupId: entriesToGroupId});
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            }
+        }
+
+        entryWith(uuid) {
+            return database => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        for (let {entry: entry} of this._collectEntries(database.KeePassFile || database)) {
+                            if (entry.UUID === uuid) {
+                                resolve(entry);
+                            }
+                        }
+                        reject(new Error(`Could not find entry ${uuid}`));
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            };
+        }
+
+        matches(searchString, max) {
+            const regExp = new RegExp(`.*${searchString}.*`, 'i');
+
+            function matchesKeyOrValue([key, value]) {
+                return regExp.test(key) || regExp.test(value.toString())
+            }
+
+            return (database) => {
+                let matches = [];
+                for (let {entry: entry} of this._collectEntries(database.KeePassFile || database, true)) {
+                    let strings = [...entry.String].filter(matchesKeyOrValue);
+                    if (strings.length > 0 || regExp.test(entry.Tags)) {
+                        log.debug('Found matching entry: ', entry);
+                        matches.push(entry);
+                        if (!!max && matches.length >= max) {
+                            break;
                         }
                     }
-                    reject(new Error(`Could not find entry ${uuid}`));
-                } catch (err) {
-                    reject(err);
                 }
-            });
+                return matches;
+            }
         };
     };
-
-    walker.matches = function (searchString, totp, max) {
-        return function (database) {
-            const regExp = new RegExp(`.*${searchString}.*`, 'i');
-            let matches = [];
-            for (let {entry: entry} of collectEntries(database.KeePassFile || database, totp, true)) {
-                if (!entry.String) {
-                    continue;
-                }
-                let strings = [...entry.String].filter(
-                        ([key, value]) =>
-                        regExp.test(key) ||
-                        regExp.test(value.toString()));
-
-                const entryMatches =
-                        strings.length > 0
-                        || regExp.test(entry.Tags)
-                        || regExp.test(entry.Tags);
-                if (entryMatches) {
-                    log.debug('Found matching entry: ', entry);
-                    matches.push(entry);
-                    if (!!max && matches.length >= max) {
-                        break;
-                    }
-                }
-            }
-            return matches;
-        }
-    };
-
-    module.exports = walker;
 })();

@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const keepassBridge = new KeepassBridge(keepassIoPromise, remember.timeout);
-    new Mainview(electron.clipboard, keepassBridge);
+    new Mainview(electron.clipboard, keepassBridge, remember.timeout);
 });
 
 

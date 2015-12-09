@@ -1,33 +1,20 @@
 (function () {
     const log = require('loglevel');
-    const TOTP = require('onceler').TOTP;
-
-    const walker = require('../../../browser/keepass/keepass_walker');
-    const sanitizeDb = walker.sanitizeDb;
-    const getString = walker.getString;
-    const matches = walker.matches;
-    const entryWith = walker.entryWith;
-
-    const timeout = 3;
+    const Walker = require('../../../browser/keepass/keepass_walker');
+    const decrypt = require('../../../browser/keepass/obfuscate').decrypt;
 
     describe('KeepassWalker', ()=> {
 
-        let clock;
-        let totp;
         let testDatabase;
+        let walker;
 
         beforeEach(() => {
-            clock = sinon.useFakeTimers(new Date(2011, 9, 1).getTime());
-            totp = new TOTP('IFAUCQKCIJBEE===', 12, 3);
+            walker = new Walker(() => 3);
             testDatabase = JSON.parse(JSON.stringify(require('./exampledb.json')));
         });
 
-        afterEach(() => {
-            clock.restore();
-        });
-
         it('transforms single group without entries or subgroups', done => {
-            sanitizeDb(totp)(testDatabase.KeePassFile.Root.Group.Group[0])
+            walker.getDatabase()(testDatabase.KeePassFile.Root.Group.Group[0])
                     .then(({database: transformedGroup}) => {
                         expect(transformedGroup.UUID).to.equal('wXlnHFx+T0mHRYtNN+WgJg==');
                         expect(transformedGroup.Name).to.equal('General');
@@ -54,7 +41,7 @@
         });
 
         it('transforms single group with entries', done => {
-            sanitizeDb(totp)(testDatabase.KeePassFile.Root.Group.Group[1])
+            walker.getDatabase()(testDatabase.KeePassFile.Root.Group.Group[1])
                     .then(({database: database}) => {
                         const transformedGroup = database;
 
@@ -101,13 +88,17 @@
                         expect(transformedGroup.Entry.String.get('Notes')).to.equal('');
 
                         expect(transformedGroup.Entry.String.get('Password')._).not.to.equal('kyFKNwuVRni4pvxhveJm');
+
+                        const encrypted = transformedGroup.Entry.String.get('Password')._;
+                        const decrypted = decrypt(3, encrypted);
+                        expect(decrypted).to.equal('kyFKNwuVRni4pvxhveJm');
                     })
                     .then(done)
                     .catch(done);
         });
 
         it('transforms an entry', done => {
-            sanitizeDb(totp)(testDatabase.KeePassFile.Root.Group)
+            walker.getDatabase()(testDatabase.KeePassFile.Root.Group)
                     .then(({entriesToGroupId: entriesToGroupId}) => {
                         const transformedEntry = entriesToGroupId.get('n3rnRvvOF0SvPriiFXr+Tg==')[0];
                         expect(transformedEntry.UUID).to.equal('ZAw4YRw+pEic7TYfVOQ9vg==');
@@ -152,7 +143,7 @@
                     }]
             };
 
-            sanitizeDb(totp)(someGroups)
+            walker.getDatabase()(someGroups)
                     .then(({database: database}) => {
                         expect(database.UUID).to.equal('parent');
                         expect(database.Group[0].UUID).to.equal('Child1');
@@ -163,7 +154,7 @@
         });
 
         it('transforms the complete database', done => {
-            sanitizeDb(totp)(testDatabase)
+            walker.getDatabase()(testDatabase)
                     .then(({database: database, entriesToGroupId: entriesToGroupId}) => {
                         const mainGroup = database.Root.Group;
 
@@ -182,7 +173,7 @@
         });
 
         it('gets all the entries', done => {
-            sanitizeDb(totp)(testDatabase)
+            walker.getDatabase()(testDatabase)
                     .then(({database: database, entriesToGroupId: entriesToGroupId}) => {
                         const g1 = entriesToGroupId.get('n3rnRvvOF0SvPriiFXr+Tg==');
                         expect(g1).to.exist;
@@ -207,7 +198,7 @@
         });
 
         it('gets all the entries - TWICE', done => {
-            sanitizeDb(totp)(testDatabase)
+            walker.getDatabase()(testDatabase)
                     .then(({database: database, entriesToGroupId: entriesToGroupId}) => {
                         const g1 = entriesToGroupId.get('n3rnRvvOF0SvPriiFXr+Tg==');
                         expect(g1).to.exist;
@@ -232,99 +223,52 @@
         });
 
         it('finds entries by strings-value', () => {
-            let getMatch = matches('aValue01', totp)(testDatabase);
+            let getMatch = walker.matches('aValue01')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by strings-key', () => {
-            totp = new TOTP('IFAUCQKCIJBEE===', 12, 777);
-            let getMatch = matches('aField01', totp)(testDatabase);
+            let getMatch = walker.matches('aField01')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by substring of strings-value', () => {
-            let getMatch = matches('aVa', totp)(testDatabase);
+            let getMatch = walker.matches('aVa')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by substring of strings-key', () => {
-            let getMatch = matches('aFi', totp)(testDatabase);
+            let getMatch = walker.matches('aFi')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of strings-value', () => {
-            let getMatch = matches('a.*01', totp)(testDatabase);
+            let getMatch = walker.matches('a.*01')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of strings-key', () => {
-            let getMatch = matches('a.*01', totp)(testDatabase);
+            let getMatch = walker.matches('a.*01')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of tags', () => {
-            let getMatch = matches('t.*g2', totp)(testDatabase);
+            let getMatch = walker.matches('t.*g2')(testDatabase);
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
-        });
-
-        describe('handles protected strings', () => {
-            it('like getting a password', done => {
-                getString('XGgNkCd2WESeK0KK1K7ahg==', 'Password', totp)(testDatabase)
-                        .then(password => {
-                            expect(password).to.equal('kyFKNwuVRni4pvxhveJm');
-                        })
-                        .then(done)
-                        .catch(done);
-            });
-
-            it('like getting a password', done => {
-                getString('XGgNkCd2WESeK0KK1K7ahg==', 'Password', totp)(testDatabase)
-                        .then(password => {
-                            expect(password).to.equal('kyFKNwuVRni4pvxhveJm');
-                        })
-                        .then(done)
-                        .catch(done);
-            });
-
-            it('decryption impossible after the totp time out', done => {
-                log.debug('Let time almost run out');
-                clock.tick(2999);
-
-                log.debug('Trying to access the protected entry after timeout');
-                getString('XGgNkCd2WESeK0KK1K7ahg==', 'Password', totp)(testDatabase)
-                        .then(password=> {
-                            log.debug('Evaluating first call - should yet be successful');
-                            expect(password).to.equal('kyFKNwuVRni4pvxhveJm');
-                        })
-                        .then(() => {
-                            log.debug('Let the time run out');
-                            clock.tick(1);
-                        })
-                        .then(() => {
-                            return getString('XGgNkCd2WESeK0KK1K7ahg==', 'Password', totp)(testDatabase);
-                        })
-                        .then(() => done('Expected an exception'))
-                        .catch(error => {
-                            expect(error.message).to.equal(
-                                    'error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt');
-                            done();
-                        }).catch(done);
-            });
-
         });
     });
 

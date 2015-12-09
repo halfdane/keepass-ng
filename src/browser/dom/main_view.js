@@ -4,10 +4,12 @@ import GroupTree  from './group_tree';
 import EntryList from './entry_list';
 
 import AccessDatabase from './prompts/access_database';
+const decrypt = require('../keepass/obfuscate').decrypt;
 
 export default class MainView {
 
     constructor(electronClipboard, keepassBridge,
+                waitFor = ()=>3,
                 groupTree = new GroupTree(),
                 entryList = new EntryList()) {
 
@@ -69,8 +71,8 @@ export default class MainView {
 
         document.addEventListener('copy-password-of-active-entry', () => {
             log.debug('Copying active password');
-            entryList.getIdOfActiveEntry()
-                    .then(uuid => keepassBridge.getPassword(uuid))
+            entryList.getPasswordOfActiveEntry()
+                    .then(password => decrypt(waitFor(), password))
                     .then(electronClipboard.writeText)
                     .catch(this.handleErrors.bind(this));
         });
@@ -92,7 +94,6 @@ export default class MainView {
     }
 
     handleErrors(err) {
-        log.debug('Handling error ', err);
         if (err.name === 'KpioArgumentError') {
             if (err.message === 'Expected `rawPassword` to be a string' ||
                     err.message === 'Expected `filePath` to be a String') {

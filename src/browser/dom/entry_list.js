@@ -20,15 +20,17 @@
             </thead>
             <tbody>
             {{entries}}
-                <tr class="entry{{if #|first}} info{{/if}}" data-UUID="{{UUID}}" data-username="{{String|call>get>UserName|blank>}}">
+                <tr class="entry{{if #|first}} info{{/if}}" data-UUID="{{UUID}}"
+                        data-username="{{.|getVal>UserName|blank>}}"
+                        data-password="{{.|getPassword|blank>}}">
                     <td>
                         <span class="icon-number-{{IconID}}"></span>
-                        <span>{{String|call>get>Title|blank>}}</span>
+                        <span>{{.|getVal>Title|blank>}}</span>
                     </td>
-                    <td>{{String|call>get>UserName|blank>}}</td>
+                    <td>{{.|getVal>UserName|blank>}}</td>
                     <td>****</td>
-                    <td>{{String|call>get>URL|blank>}}</td>
-                    <td>{{String|call>get>Notes|blank>}}</td>
+                    <td>{{.|getVal>URL|blank>}}</td>
+                    <td>{{.|getVal>Notes|blank>}}</td>
                 </tr>
             {{/entries}}
             </tbody>
@@ -64,12 +66,28 @@
         }
 
         show(entries) {
-            this.element.innerHTML = Mark.up(template, {entries: entries});
+            this.element.innerHTML = Mark.up(template, {entries: entries},
+                    {
+                        pipes: {
+                            getPassword: function (entry) {
+                                return entry.String.get('Password')._;
+                            },
+                            getVal: function (entry, key) {
+                                return entry.String.get(key);
+                            }
+                        }
+                    });
         }
 
         getIdOfActiveEntry() {
             return new Promise(resolve => {
                 resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-UUID'));
+            });
+        }
+
+        getPasswordOfActiveEntry() {
+            return new Promise(resolve => {
+                resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-password'));
             });
         }
 
