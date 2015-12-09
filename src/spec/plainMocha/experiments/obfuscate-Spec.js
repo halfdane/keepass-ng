@@ -5,7 +5,7 @@ describe('in combination with onceler', () => {
     const decrypt = require('../../../browser/keepass/obfuscate').decrypt;
 
     const plaintext = 'your secret key here, may as well be a bit longish, no worries, everything will be fine';
-    
+
     let totp;
     let clock;
 

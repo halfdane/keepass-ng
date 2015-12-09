@@ -1,6 +1,7 @@
 (function () {
 
     const crypto = require('crypto');
+    const TOTP = require('onceler').TOTP;
 
     module.exports.encrypt = function (totp, plaintext) {
         const key = crypto.createHash('sha256').update(totp.now().toString()).digest('hex');
@@ -19,5 +20,10 @@
         decrypted += decipher.final('utf8');
         return decrypted;
     };
+
+    module.exports.generateTotp = function (timeWindow) {
+        const key = crypto.createHash('sha256').digest('hex');
+        return new TOTP(key, 12, timeWindow);
+    }
 
 })();

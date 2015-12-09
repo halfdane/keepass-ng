@@ -11,8 +11,9 @@ describe('Remember function', () => {
         try {
             fs.unlinkSync(TESTFILE);
         } catch (err) {
-            // someone didn't create a file?
-            log.debug(err);
+            if (err.message !== 'ENOENT: no such file or directory, unlink \'./test.json\'') {
+                log.debug(err);
+            }
         }
     });
 

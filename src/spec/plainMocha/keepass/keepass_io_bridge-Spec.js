@@ -29,7 +29,7 @@ describe('KeepassIoBridge', () => {
         expect(keepassio).to.have.been.calledOnce;
     });
 
-    xit('caches calls to keepassio', () => {
+    it('caches calls to keepassio', () => {
         const k = new KeepassIoBridge(keepassio, () => 30);
 
         k.accessDatabase({});
@@ -53,31 +53,31 @@ describe('KeepassIoBridge', () => {
 
         k.accessDatabase({password: 'masterPasswordToUnlockTheCompleteDatabase'});
 
-        console.log('Let time run out almost completely');
+        log.debug('Let time run out almost completely');
         clock.tick(2999);
 
-        console.log('First call to the database (returning the stubbed promise)');
+        log.debug('First call to the database (returning the stubbed promise)');
         k.getDatabase()
                 .then(()=> {
-                    console.log('Evaluating first call - should yet be successful');
+                    log.debug('Evaluating first call - should yet be successful');
                     const firstCall = keepassio.getCall(0).args[0];
                     expect(firstCall.password).to.equal('masterPasswordToUnlockTheCompleteDatabase');
                 })
                 .then(() => {
-                    console.log('Let the time run out');
+                    log.debug('Let the time run out');
                     clock.tick(1);
                 })
                 .then(() => {
-                    console.log('drop cached database instance');
+                    log.debug('drop cached database instance');
                     delete k.db;
                 })
                 .then(() => {
-                    console.log('Trying to access the database after timeout');
+                    log.debug('Trying to access the database after timeout');
                     k.getDatabase()
                 })
                 .then(() => done('Expected an exception'))
                 .catch(error => {
-                    console.log('Evaluating the expected error message');
+                    log.debug('Evaluating the expected error message');
                     expect(error.message).to.equal('error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt');
                     done();
                 }).catch(done);
