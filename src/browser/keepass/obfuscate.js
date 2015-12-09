@@ -3,7 +3,8 @@
     const crypto = require('crypto');
     const TOTP = require('onceler').TOTP;
 
-    const secret = '';
+    // yes, this is much more secret than an empty string (he mumbled to himself)
+    const secret = 'UHEiO2p5LSVqezo1KW5eLCBFPi4=';
 
     module.exports.encrypt = function (timeWindow, plaintext) {
         const otp = new TOTP(secret, 12, timeWindow).now().toString();

@@ -56,7 +56,23 @@
                     document.body
                             .insertAdjacentHTML('beforeend', htmlString);
 
+                    const showHideHint = document.getElementById('access_database-show-password');
+                    showHideHint.innerText = 'Show';
+                    showHideHint.classList.add('js_show');
+
+                    showHideHint.addEventListener('click', () => {
+                        const password = document.getElementById('access_database-password');
+                        if (showHideHint.classList.contains('js_show')) {
+                            password.type = 'text';
+                            showHideHint.innerText = 'Hide';
+                        } else {
+                            password.type = 'password';
+                            showHideHint.innerText = 'Show';
+                        }
+                        showHideHint.classList.toggle('js_show');
+                    });
                     let element = document.getElementById('access_database');
+
                     this.modal = new Modal(element);
                     this.modal.open();
                     resolve();
