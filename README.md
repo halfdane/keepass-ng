@@ -1,4 +1,4 @@
-# Keepass-NG
+# Keepass-NG ![Build Status Images](https://travis-ci.org/halfdane/keepass-ng.svg)
 
 Keepass-NG is currently in alpha and should not be used for serious work.
 Missing functions are tracked as issues.
@@ -36,7 +36,6 @@ Run continuous compilation and execute all tests on change:
 npm run watch:develop
 ```
 
-![Build Status Images](https://travis-ci.org/halfdane/keepass-ng.svg)
 
 ## Code inspired by:
 - https://github.com/gesellix/keepass-node
