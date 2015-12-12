@@ -110,7 +110,7 @@ export default class MainView {
                 this.getFileAndCredentials({keyfile: 'fileNotFound'});
             }
         } else {
-            log.error('COULD NOT HANDLE ', err);
+            log.error('COULD NOT HANDLE ', err.stack);
         }
     }
 

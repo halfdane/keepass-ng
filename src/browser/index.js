@@ -1,6 +1,5 @@
 import electron from 'electron';
 
-
 import remember from './settings';
 import AppMenu from './menu.js';
 
@@ -29,6 +28,7 @@ const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile:
                     log.debug('Sending the error onward', err);
                     reject(err);
                 } else {
+                    log.debug('Finished reading db.');
                     resolve(afterLoaded(db.getRawApi().get().KeePassFile));
                     remember.lastAccessedFile(dbfile);
                 }
@@ -40,8 +40,7 @@ const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile:
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    //TODO: make configurable
-    log.setLevel(log.levels.DEBUG);
+    log.setDebug(true);
     new AppMenu();
 
     window.global.remember = remember;

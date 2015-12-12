@@ -1,4 +1,3 @@
-'use strict';
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -14,9 +13,6 @@ process.argv.forEach(function (val, index, array) {
         watching = true;
     }
 });
-console.log('Watching: ', watching);
-
-let mainWindow;
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -25,12 +21,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    let mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow.hide();
     mainWindow.loadURL(`file://${__dirname}/index.html`);
-    mainWindow.webContents.openDevTools();
-
     mainWindow.webContents.on('did-finish-load', function () {
-
         glob(`${__dirname}/**/*-Spec.js`, function (er, files) {
             if (!er) {
                 files = files.map(f => path.resolve(f));
@@ -44,7 +38,9 @@ app.on('ready', () => {
             process.exit(code);
         });
         ipc.on('mocha-error', function (event, data) {
-            writeError(data);
+            process.stderr.write(`
+Error encountered in ${path.relative(process.cwd(), data.filename)}: ${data.message}
+${data.stack}`);
             process.exit(1);
         });
     }
@@ -54,6 +50,3 @@ app.on('ready', () => {
     });
 });
 
-function writeError(data) {
-    process.stderr.write(`\nError encountered in ${path.relative(process.cwd(), data.filename)}: ${data.message}\n${data.stack}`);
-}
