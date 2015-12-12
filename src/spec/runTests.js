@@ -5,8 +5,8 @@
 })();
 
 (function createDoubleClick() {
-    if (!window.HTMLElement.prototype['dblclick']) {
-        window.HTMLElement.prototype['dblclick'] = function () {
+    if (!window.HTMLElement.prototype.dblclick) {
+        window.HTMLElement.prototype.dblclick = function () {
             var ev = document.createEvent('MouseEvent');
             ev.initMouseEvent(
                     'dblclick',
