@@ -36,6 +36,8 @@ Run continuous compilation and execute all tests on change:
 npm run watch:develop
 ```
 
+!(Build Status Images)[https://travis-ci.org/halfdane/keepass-ng.svg]
+
 ## Code inspired by:
 - https://github.com/gesellix/keepass-node
 - https://github.com/chadly/gui.keepass.io
