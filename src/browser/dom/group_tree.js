@@ -14,28 +14,29 @@ export default class GroupTree extends events.EventEmitter {
         Mark.pipes.asId = function (str) {
             return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '');
         };
-
         Mark.includes.groupTree = `
-        {{if Group}}
-        <ul class="nav nav-pills nav-stacked collapse{{if IsExpanded}} in{{/if}}" role="presentation">
         {{Group}}
-            <li id="{{UUID|asId}}">
-                <a class="group" data-UUID="{{UUID}}">
-                    {{if Group}}
-                    <a class="collapse-toggle" data-toggle="collapse" data-target=".nav #{{UUID|asId}} > .collapse"></a>
-                    {{else}}
-                    <span> </span>
-                    {{/if}}
-                    <span>
-                      <span class="icon-number-{{IconID}}"></span>
-                      <span>{{Name}}</span>
-                    </span>
-                </a>
-                {{groupTree}}
-            </li>
+            <div class="nav" id="navOf_{{UUID|asId}}">
+                {{if Group}}
+                <a class="collapse-toggle {{if IsExpanded|equals>True}}collapsed{{/if}}"
+                    data-toggle="collapse"
+                    data-target=".groupsIn_{{UUID|asId}}"
+                    role=button></a>
+                {{/if}}
+                <div id="{{UUID|asId}}"
+                    data-UUID="{{UUID}}"
+                    class="group"
+                    role=button>
+                        <span class="icon icon-number-{{IconID}}"></span>
+                        <span>{{Name}}</span>
+                </div>
+                {{if Group}}
+                <div class="groupsIn_{{UUID|asId}} collapse {{if IsExpanded|equals>True}}in{{/if}}">
+                    {{groupTree}}
+                </div>
+                {{/if}}
+            </div>
         {{/Group}}
-        </ul>
-        {{/if}}
         `;
     }
 
@@ -56,6 +57,7 @@ export default class GroupTree extends events.EventEmitter {
     }
 
     show(groups) {
+        console.log('Got groups. Showing them');
         this.element.innerHTML = Mark.up('{{groupTree}}', {Group: groups, toplevel: true});
         for (let item of this.element.querySelectorAll('[data-toggle="collapse"]')) {
             new Collapse(item);

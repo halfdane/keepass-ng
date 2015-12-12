@@ -86,10 +86,10 @@ describe('GroupTree', () => {
             checkGroup(2);
             checkGroup(3);
 
-            var parentGroup = document.getElementById('uuidparent');
-            var firstChild = document.getElementById('uuid1');
-            var secondChild = document.getElementById('uuid2');
-            var thirdChild = document.getElementById('uuid3');
+            var parentGroup = document.getElementById('navOf_uuidparent');
+            var firstChild = document.getElementById('navOf_uuid1');
+            var secondChild = document.getElementById('navOf_uuid2');
+            var thirdChild = document.getElementById('navOf_uuid3');
 
             expect(parentGroup).to.contain(firstChild);
             expect(parentGroup).to.contain(secondChild);
@@ -111,17 +111,17 @@ describe('GroupTree', () => {
 
             groupTree.show([group1, group2]);
 
-            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_1'));
-            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_1_1'));
-            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_2'));
-            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_3'));
-            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_3_1'));
+            expect(document.getElementById('navOf_uuid1')).to.contain(document.getElementById('navOf_uuid1_1'));
+            expect(document.getElementById('navOf_uuid1')).to.contain(document.getElementById('navOf_uuid1_1_1'));
+            expect(document.getElementById('navOf_uuid1')).to.contain(document.getElementById('navOf_uuid1_2'));
+            expect(document.getElementById('navOf_uuid1')).to.contain(document.getElementById('navOf_uuid1_3'));
+            expect(document.getElementById('navOf_uuid1')).to.contain(document.getElementById('navOf_uuid1_3_1'));
 
-            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_1'));
-            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_2'));
-            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_2_1'));
-            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_3'));
-            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_3_1'));
+            expect(document.getElementById('navOf_uuid2')).to.contain(document.getElementById('navOf_uuid2_1'));
+            expect(document.getElementById('navOf_uuid2')).to.contain(document.getElementById('navOf_uuid2_2'));
+            expect(document.getElementById('navOf_uuid2')).to.contain(document.getElementById('navOf_uuid2_2_1'));
+            expect(document.getElementById('navOf_uuid2')).to.contain(document.getElementById('navOf_uuid2_3'));
+            expect(document.getElementById('navOf_uuid2')).to.contain(document.getElementById('navOf_uuid2_3_1'));
         });
     });
 

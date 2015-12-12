@@ -1,22 +1,14 @@
-ul.nav ul {
-    margin-left: 10%;
-}
-
-.nav > li > a {
-    padding: 2px 2px;
-}
-
 #groups {
-    width: 30%;
-    overflow-x: auto;
     display: inline-block;
+    overflow-x: auto;
+    width: 30%;
 }
 
 #entries {
-    width: 69%;
-    overflow-x: auto;
     display: inline-block;
+    overflow-x: auto;
     vertical-align: top;
+    width: 69%;
 }
 
 /* enables CSS3 transition for simple collapses, accordion and also navbar in responsive view */
@@ -34,16 +26,23 @@ ul.nav ul {
     user-select: none;
 }
 
+.nav .nav {
+    margin-left: 17px;
+}
+
+.group .icon {
+    margin: 2px 2px;
+}
+
 .collapse-toggle:before {
-    padding-right: 10px;
+    color: grey;
     /* symbol for "opening" panels */
-    font-family: 'Glyphicons Halflings'; /* essential for enabling glyphicon */
-    content: "\e114"; /* adjust as needed, taken from bootstrap.css */
-    float: left; /* adjust as needed */
-    color: grey; /* adjust as needed */
+    content: "\e080"; /* essential for enabling glyphicon */
+    float: left;
+    font-family: 'Glyphicons Halflings'; /* adjust as needed */
+    padding-right: 3px; /* adjust as needed */
 }
 
 .collapse-toggle.collapsed:before {
-    /* symbol for "collapsed" panels */
-    content: "\e080"; /* adjust as needed, taken from bootstrap.css */
+    content: "\e114";
 }
