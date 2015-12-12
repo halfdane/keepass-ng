@@ -61,17 +61,15 @@ describe('A Promise', () => {
         });
 
         it('can fake time', () => {
-            const show = date => date.toLocaleString('en-US', {timeZone: 'Asia/Jakarta'});
+            const startTime = new Date().getTime();
 
-            expect(show(new Date())).to.equal('10/1/2011, 5:00:00 AM');
             clock.tick(5000);
-            expect(show(new Date())).to.equal('10/1/2011, 5:00:05 AM');
+            expect(new Date().getTime()).to.equal(startTime + 5000);
             clock.tick(5000);
-            expect(show(new Date())).to.equal('10/1/2011, 5:00:10 AM');
+            expect(new Date().getTime()).to.equal(startTime + 10000);
             clock.tick(5000);
-            expect(show(new Date())).to.equal('10/1/2011, 5:00:15 AM');
+            expect(new Date().getTime()).to.equal(startTime + 15000);
             clock.restore();
-            expect(show(new Date())).not.to.equal('10/1/2011, 5:00:15 AM');
         });
 
         it('can delete something after timeout', () => {
