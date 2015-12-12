@@ -67,6 +67,7 @@
         }
 
         show(entries) {
+            log.debug('Got entries: ', entries);
             this.element.innerHTML = Mark.up(template, {entries: entries},
                     {
                         pipes: {

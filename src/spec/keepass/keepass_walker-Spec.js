@@ -222,49 +222,49 @@
         });
 
         it('finds entries by strings-value', () => {
-            let getMatch = walker.matches('aValue01')(testDatabase);
+            let getMatch = walker.matches('aValue01')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by strings-key', () => {
-            let getMatch = walker.matches('aField01')(testDatabase);
+            let getMatch = walker.matches('aField01')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by substring of strings-value', () => {
-            let getMatch = walker.matches('aVa')(testDatabase);
+            let getMatch = walker.matches('aVa')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by substring of strings-key', () => {
-            let getMatch = walker.matches('aFi')(testDatabase);
+            let getMatch = walker.matches('aFi')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of strings-value', () => {
-            let getMatch = walker.matches('a.*01')(testDatabase);
+            let getMatch = walker.matches('a.*01')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of strings-key', () => {
-            let getMatch = walker.matches('a.*01')(testDatabase);
+            let getMatch = walker.matches('a.*01')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
         });
 
         it('finds entries by regexp of tags', () => {
-            let getMatch = walker.matches('t.*g2')(testDatabase);
+            let getMatch = walker.matches('t.*g2')({database: testDatabase});
 
             expect(getMatch[0].UUID).to.equal('kGrsiQCqAkeTpaguAP8s4Q==');
             expect(getMatch.length).to.deep.equal(1);
