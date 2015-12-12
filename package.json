@@ -4,20 +4,15 @@
   "description": "The next generation KeePass",
   "main": "dist/app/index.js",
   "scripts": {
-    "build": "babel -d dist/ src/ --source-maps true --source-root ../src/ --copy-files",
-    "watch:build": "npm run build -- -w",
+    "build": "babel -d dist/ src/ --source-maps true --copy-files",
     "prestart": "npm run build",
     "start": "electron .",
-    "watch:test:all": "parallelshell 'npm run test:all' 'npm run livereload -s'",
-    "test:all": "electron dist/spec/index.js",
-    "livereload": "live-reload --port 9091 dist/",
-    "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
+    "test": "electron dist/spec/index.js",
     "pretest": "npm run hint",
-    "test:phantomjs": "karma start",
-    "test": "npm run test:mocha && npm run test:phantomjs",
-    "watch:test:nodejs": "nodemon -e js,html,css --watch src/ --exec 'npm run test:nodejs --silent'",
-    "watch:test:phantomjs": "nodemon -e js,html,css --watch src/ --exec 'npm run test:phantomjs --silent'",
-    "watch:test": "nodemon -e js,html,css --watch dist/ --exec 'npm run test --silent'"
+    "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
+
+    "travis-ci": "npm run build && npm run test",
+    "watch:develop": "parallelshell 'npm run build -- -w' 'npm run test -- -w'"
   },
   "dependencies": {
     "crypto-js": "^3.1.5",
@@ -71,6 +66,7 @@
     "live-reload": "^1.1.0",
     "live-server": "^0.9.0",
     "mocha": "^2.3.4",
+    "mocha-better-spec-reporter": "^3.0.1",
     "node-dir": "^0.1.11",
     "nodemon": "^1.8.1",
     "parallelshell": "^2.0.0",
@@ -82,7 +78,6 @@
     "should": "^7.1.1",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
-    "source-map-support": "^0.4.0",
     "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

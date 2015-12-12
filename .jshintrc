@@ -23,7 +23,8 @@
     "it": false,
     "xit": false,
     "window": false,
-    "sinon": false
+    "sinon": false,
+    "CustomEvent": false
   },
   "trailing": true,
   "newcap": false,

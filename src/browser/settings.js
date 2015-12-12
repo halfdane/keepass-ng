@@ -1,6 +1,4 @@
-const log = require('./logger');
-
-const remember = (() => {
+module.exports = (() => {
     const LAST_ACCESSED_FILES = 'lastAccessedFiles';
     const TIMEOUT_FOR_CONFIDENTIAL_DATA = 'timeoutForConfidentialData';
 
@@ -24,12 +22,12 @@ const remember = (() => {
     }
 
     function timeout(newTimeout) {
-        let timeout = readSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA);
+        let timeoutValue = readSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA);
         if (!!newTimeout) {
-            timeout = +newTimeout;
-            saveSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA, timeout);
+            timeoutValue = +newTimeout;
+            saveSettings(TIMEOUT_FOR_CONFIDENTIAL_DATA, timeoutValue);
         }
-        return timeout;
+        return timeoutValue;
     }
 
     function saveSettings(settingKey, settingValue) {
@@ -49,7 +47,7 @@ const remember = (() => {
     }
 
     function getUserHome() {
-        return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+        return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
     }
 
     toLocation(getUserHome() + '/.keepassng.json');
@@ -61,7 +59,4 @@ const remember = (() => {
         saveSettings: saveSettings,
         readSettings: readSettings
     };
-
 })();
-
-export { remember as default };

@@ -1,11 +1,20 @@
+const ipc = require('electron').ipcRenderer;
+
 (function () {
     global.browserconsole = console;
     console = require('remote').require('console');
-    window.onerror = function (msg, url, line, col, error) {
-        console.error('whatever: ', error.stack);
+    window.onerror = function (message, filename, line, col, error) {
+        ipc.send('mocha-error', {
+            message: message,
+            filename: filename,
+            err: error,
+            stack: error.stack
+        });
+        console.error(error.stack);
     };
 
     global.log = require('../browser/logger');
+
 })();
 
 (function () {
@@ -26,7 +35,6 @@
         }
     }
 
-    //createMouseEvent('click');
     createMouseEvent('dblclick');
 })();
 
@@ -39,15 +47,21 @@ chai.config.includeStack = true;
 global.expect = chai.expect;
 global.sinon = require('sinon');
 
-onload = function () {
-    require('electron').ipcRenderer.on('mocha-run', function (event, files) {
-        var mocha = new Mocha({ui: 'bdd', reporter: 'dot'});
+window.onload = function () {
+    ipc.on('mocha-run', function (event, files) {
+        var mocha = new Mocha({
+            ui: 'bdd',
+            reporter: 'mocha-better-spec-reporter'
+        });
 
         mocha.checkLeaks();
         for (let file of files) {
             mocha.addFile(file);
         }
-        mocha.run();
+        mocha.run((failureCount) => {
+            ipc.send('mocha-done', failureCount);
+        });
+
     });
 };
 

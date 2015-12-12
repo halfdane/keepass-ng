@@ -31,6 +31,10 @@ Build the application and run it:
 npm start
 ```
 
+Run continuous compilation and execute all tests on change:
+```bash
+npm run watch:develop
+```
 
 ## Code inspired by:
 - https://github.com/gesellix/keepass-node
