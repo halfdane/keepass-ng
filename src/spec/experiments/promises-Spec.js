@@ -52,7 +52,17 @@ describe('A Promise', () => {
         let clock;
 
         beforeEach(() => {
-            clock = sinon.useFakeTimers(new Date(2011, 9, 1).getTime());
+            const date = new Date(2011, 9, 1);
+
+            const localTime = date.getTime();
+            const localOffset = date.getTimezoneOffset() * 60 * 1000;
+
+            const utc = localTime + localOffset;
+
+            const offset = 2;
+            const berlin = utc + (60 * 60 * 1000 * offset);
+            const nd = new Date(berlin);
+            clock = sinon.useFakeTimers(nd.getTime());
         });
 
         afterEach(() => {

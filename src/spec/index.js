@@ -15,6 +15,8 @@ process.argv.forEach(function (val, index, array) {
     }
 });
 
+console.log('Watching: ', watching);
+
 let mainWindow;
 
 app.on('window-all-closed', () => {
