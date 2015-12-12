@@ -11,7 +11,8 @@
     "pretest": "npm run hint",
     "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
     "travis-ci": "npm run build && npm run test",
-    "watch:develop": "parallelshell 'npm run build -- -w' 'npm run test -- -w'"
+    "watch:develop": "parallelshell 'npm run build -- -w' 'npm run test -- -w' 'npm run livereload' ",
+    "livereload": "live-reload --port 9091 dist/"
   },
   "dependencies": {
     "crypto-js": "^3.1.5",
@@ -34,6 +35,7 @@
     "jscs": "^2.6.0",
     "jshint": "^2.8.0",
     "jshint-stylish": "^2.1.0",
+    "live-reload": "^1.1.0",
     "live-server": "^0.9.0",
     "mocha": "^2.3.4",
     "mocha-better-spec-reporter": "^3.0.1",

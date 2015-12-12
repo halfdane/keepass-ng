@@ -53,16 +53,7 @@ describe('A Promise', () => {
 
         beforeEach(() => {
             const date = new Date(2011, 9, 1);
-
-            const localTime = date.getTime();
-            const localOffset = date.getTimezoneOffset() * 60 * 1000;
-
-            const utc = localTime + localOffset;
-
-            const offset = 2;
-            const berlin = utc + (60 * 60 * 1000 * offset);
-            const nd = new Date(berlin);
-            clock = sinon.useFakeTimers(nd.getTime());
+            clock = sinon.useFakeTimers(date.getTime());
         });
 
         afterEach(() => {
@@ -70,15 +61,17 @@ describe('A Promise', () => {
         });
 
         it('can fake time', () => {
-            expect(new Date().toString()).to.equal('Sat Oct 01 2011 00:00:00 GMT+0200 (CEST)');
+            const show = date => date.toLocaleString('en-US', {timeZone: 'Asia/Jakarta'});
+
+            expect(show(new Date())).to.equal('10/1/2011, 5:00:00 AM');
             clock.tick(5000);
-            expect(new Date().toString()).to.equal('Sat Oct 01 2011 00:00:05 GMT+0200 (CEST)');
+            expect(show(new Date())).to.equal('10/1/2011, 5:00:05 AM');
             clock.tick(5000);
-            expect(new Date().toString()).to.equal('Sat Oct 01 2011 00:00:10 GMT+0200 (CEST)');
+            expect(show(new Date())).to.equal('10/1/2011, 5:00:10 AM');
             clock.tick(5000);
-            expect(new Date().toString()).to.equal('Sat Oct 01 2011 00:00:15 GMT+0200 (CEST)');
+            expect(show(new Date())).to.equal('10/1/2011, 5:00:15 AM');
             clock.restore();
-            expect(new Date().toString()).not.to.equal('Sat Oct 01 2011 00:00:15 GMT+0200 (CEST)');
+            expect(show(new Date())).not.to.equal('10/1/2011, 5:00:15 AM');
         });
 
         it('can delete something after timeout', () => {

@@ -14,7 +14,6 @@ process.argv.forEach(function (val, index, array) {
         watching = true;
     }
 });
-
 console.log('Watching: ', watching);
 
 let mainWindow;
@@ -23,12 +22,6 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
-});
-
-require('live-server').start({
-    port: 8181, // Set the server port. Defaults to 8080.
-    open: false, // When false, it won't load your browser by default.
-    wait: 100
 });
 
 app.on('ready', () => {
