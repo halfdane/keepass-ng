@@ -1,7 +1,6 @@
 (function () {
-    const log = require('loglevel');
-    const Walker = require('../../../browser/keepass/keepass_walker');
-    const decrypt = require('../../../browser/keepass/obfuscate').decrypt;
+    const Walker = require('../../browser/keepass/keepass_walker');
+    const decrypt = require('../../browser/keepass/obfuscate').decrypt;
 
     describe('KeepassWalker', ()=> {
 

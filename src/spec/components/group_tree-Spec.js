@@ -72,23 +72,24 @@ describe('GroupTree', () => {
 
             checkGroup(1);
             checkGroup(2);
-            expect(document.getElementById('testElement')).to.contain('.nav .group .nav .group');
+            expect(document.getElementById('testElement')).to.contain('.nav .group');
+            expect(document.getElementById('testElement')).to.contain('.nav .nav .group');
         });
 
-        it('should display one group with multiple children', () => {
+        it('should display one group with multiple children (and one subchild)', () => {
             var groupTree = new GroupTree(document.getElementById('testElement'));
-            var group1 = createGroup(1, [createGroup(2), createGroup(3), createGroup(4)]);
+            var group1 = createGroup('parent', [createGroup(1), createGroup(2, [createGroup(3)])]);
             groupTree.show([group1]);
 
+            checkGroup('parent');
             checkGroup(1);
             checkGroup(2);
             checkGroup(3);
-            checkGroup(4);
 
-            var parentGroup = document.querySelector('[data-UUID="uuid1"]');
-            var firstChild = document.querySelector('[data-UUID="uuid2"]');
-            var secondChild = document.querySelector('[data-UUID="uuid3"]');
-            var thirdChild = document.querySelector('[data-UUID="uuid4"]');
+            var parentGroup = document.getElementById('uuidparent');
+            var firstChild = document.getElementById('uuid1');
+            var secondChild = document.getElementById('uuid2');
+            var thirdChild = document.getElementById('uuid3');
 
             expect(parentGroup).to.contain(firstChild);
             expect(parentGroup).to.contain(secondChild);
@@ -96,7 +97,7 @@ describe('GroupTree', () => {
 
             expect(firstChild).not.to.contain(secondChild);
             expect(firstChild).not.to.contain(thirdChild);
-            expect(secondChild).not.to.contain(thirdChild);
+            expect(secondChild).to.contain(thirdChild);
         });
 
         it('should display pretty complex tree with multiple groups and multiple children', () => {
@@ -110,17 +111,17 @@ describe('GroupTree', () => {
 
             groupTree.show([group1, group2]);
 
-            expect(document.querySelector('[data-UUID="uuid1"]')).to.contain(document.querySelector('[data-UUID="uuid1_1"]'));
-            expect(document.querySelector('[data-UUID="uuid1"]')).to.contain(document.querySelector('[data-UUID="uuid1_1_1"]'));
-            expect(document.querySelector('[data-UUID="uuid1"]')).to.contain(document.querySelector('[data-UUID="uuid1_2"]'));
-            expect(document.querySelector('[data-UUID="uuid1"]')).to.contain(document.querySelector('[data-UUID="uuid1_3"]'));
-            expect(document.querySelector('[data-UUID="uuid1"]')).to.contain(document.querySelector('[data-UUID="uuid1_3_1"]'));
+            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_1'));
+            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_1_1'));
+            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_2'));
+            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_3'));
+            expect(document.getElementById('uuid1')).to.contain(document.getElementById('uuid1_3_1'));
 
-            expect(document.querySelector('[data-UUID="uuid2"]')).to.contain(document.querySelector('[data-UUID="uuid2_1"]'));
-            expect(document.querySelector('[data-UUID="uuid2"]')).to.contain(document.querySelector('[data-UUID="uuid2_2"]'));
-            expect(document.querySelector('[data-UUID="uuid2"]')).to.contain(document.querySelector('[data-UUID="uuid2_2_1"]'));
-            expect(document.querySelector('[data-UUID="uuid2"]')).to.contain(document.querySelector('[data-UUID="uuid2_3"]'));
-            expect(document.querySelector('[data-UUID="uuid2"]')).to.contain(document.querySelector('[data-UUID="uuid2_3_1"]'));
+            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_1'));
+            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_2'));
+            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_2_1'));
+            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_3'));
+            expect(document.getElementById('uuid2')).to.contain(document.getElementById('uuid2_3_1'));
         });
     });
 

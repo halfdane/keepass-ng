@@ -1,5 +1,6 @@
 (function () {
-    const log = require('loglevel');
+
+    const log = require('../../logger');
     const fs = require('fs');
     const path = require('path');
 

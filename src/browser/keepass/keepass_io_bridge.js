@@ -1,6 +1,7 @@
 (function () {
 
-    const log = require('loglevel');
+
+    const log = require('../logger');
     const Walker = require('./keepass_walker');
     const encrypt = require('./obfuscate').encrypt;
     const decrypt = require('./obfuscate').decrypt;

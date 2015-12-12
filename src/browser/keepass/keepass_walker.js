@@ -1,6 +1,6 @@
 (function () {
 
-    const log = require('loglevel');
+    const log = require('../logger');
     const encrypt = require('./obfuscate').encrypt;
 
     module.exports = class KeepassWalker {

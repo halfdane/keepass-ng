@@ -1,7 +1,4 @@
-import KeepassIoBridge from '../../../browser/keepass/keepass_io_bridge';
-
-import log from 'loglevel';
-
+import KeepassIoBridge from '../../browser/keepass/keepass_io_bridge';
 describe('KeepassIoBridge', () => {
 
     let clock;

@@ -1,6 +1,5 @@
 import events from 'events';
-import log from 'loglevel';
-
+const log = require('../logger');
 import './event_delegation.js';
 
 var Mark = require('markup-js');
@@ -18,16 +17,16 @@ export default class GroupTree extends events.EventEmitter {
 
         Mark.includes.groupTree = `
         {{if Group}}
-        <ul class="nav nav-pills nav-stacked collapse{{if toplevel}} in{{/if}}{{if IsExpanded}} in{{/if}}" role="presentation">
+        <ul class="nav nav-pills nav-stacked collapse{{if IsExpanded}} in{{/if}}" role="presentation">
         {{Group}}
             <li id="{{UUID|asId}}">
-                <a>
+                <a class="group" data-UUID="{{UUID}}">
                     {{if Group}}
-                    <span data-toggle="collapse" data-target=".nav #{{UUID|asId}} > .collapse">+</span>
+                    <a class="collapse-toggle" data-toggle="collapse" data-target=".nav #{{UUID|asId}} > .collapse"></a>
                     {{else}}
                     <span> </span>
                     {{/if}}
-                    <span class="group" data-UUID="{{UUID}}">
+                    <span>
                       <span class="icon-number-{{IconID}}"></span>
                       <span>{{Name}}</span>
                     </span>

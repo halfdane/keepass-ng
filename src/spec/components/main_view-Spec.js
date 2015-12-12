@@ -1,4 +1,4 @@
-import MainView from '../../browser/main_view';
+import MainView from '../../browser/dom/main_view';
 
 describe('MainView', () => {
 

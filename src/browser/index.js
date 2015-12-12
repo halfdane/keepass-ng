@@ -1,11 +1,12 @@
 import electron from 'electron';
-import log from 'loglevel';
+
 
 import remember from './settings';
 import AppMenu from './menu.js';
 
 import KeepassBridge from './keepass/keepass_io_bridge';
 import Mainview from './dom/main_view';
+const log = require('./logger');
 
 import keepassIo from 'keepass.io';
 
@@ -27,10 +28,10 @@ const keepassIoPromise = function ({dbfile: dbfile, password: password, keyfile:
                 if (err) {
                     log.debug('Sending the error onward', err);
                     reject(err);
+                } else {
+                    resolve(afterLoaded(db.getRawApi().get().KeePassFile));
+                    remember.lastAccessedFile(dbfile);
                 }
-                resolve(afterLoaded(db.getRawApi().get().KeePassFile));
-
-                remember.lastAccessedFile(dbfile);
             });
         } catch (err) {
             reject(err);
@@ -45,15 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.global.remember = remember;
 
-    ipcRenderer.on('search-and-activate-entry', function() {
+    ipcRenderer.on('search-and-activate-entry', function () {
         document.dispatchEvent(new CustomEvent('search-and-activate-entry'));
     });
 
-    ipcRenderer.on('copy-username-of-active-entry', function() {
+    ipcRenderer.on('copy-username-of-active-entry', function () {
         document.dispatchEvent(new CustomEvent('copy-username-of-active-entry'));
     });
 
-    ipcRenderer.on('copy-password-of-active-entry', function() {
+    ipcRenderer.on('copy-password-of-active-entry', function () {
         document.dispatchEvent(new CustomEvent('copy-password-of-active-entry'));
     });
 

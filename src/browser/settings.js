@@ -1,4 +1,4 @@
-import log from 'loglevel';
+const log = require('./logger');
 
 const remember = (() => {
     const LAST_ACCESSED_FILES = 'lastAccessedFiles';

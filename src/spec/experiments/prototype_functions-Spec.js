@@ -1,5 +1,3 @@
-import log from 'loglevel';
-
 describe('Protoype experiment', () => {
 
     class somethingWithAFunction {

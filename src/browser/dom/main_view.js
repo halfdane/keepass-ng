@@ -1,4 +1,4 @@
-import log from 'loglevel';
+const log = require('../logger');
 
 import GroupTree  from './group_tree';
 import EntryList from './entry_list';

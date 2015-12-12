@@ -93,7 +93,7 @@ describe('EntryList', () => {
 
             expect(inactiveEntry).not.to.have.class('info');
             inactiveEntry.click();
-            //expect(inactiveEntry).to.have.class('info');
+            expect(inactiveEntry).to.have.class('info');
         });
 
         it('should deactivate entry when clicking somewhere else', ()=> {
@@ -135,28 +135,28 @@ describe('EntryList', () => {
             document.body.removeChild(document.getElementById('fixture'));
         });
 
-        it('should return id of active entry', ()=> {
+        it('should return id of active entry', done=> {
             var entryList = new EntryList(document.getElementById('testElement'));
-            var myEntry = document.getElementById('entry1');
-            expect(myEntry.classList.contains('info')).to.be.true;
 
             // when
-            var idOfActiveEntry = entryList.getIdOfActiveEntry();
-
-            // then
-            expect(idOfActiveEntry).to.equal('someUuid');
+            entryList.getIdOfActiveEntry()
+                    .then(idOfActiveEntry => {
+                        expect(idOfActiveEntry).to.equal('someUuid');
+                    })
+                    .then(done)
+                    .catch(done);
         });
 
-        it('should return username of active entry', ()=> {
+        it('should return username of active entry', done => {
             var entryList = new EntryList(document.getElementById('testElement'));
-            var myEntry = document.getElementById('entry1');
-            expect(myEntry.classList.contains('info')).to.be.true;
 
             // when
-            var usernameOfActiveEntry = entryList.getUsernameOfActiveEntry();
-
-            // then
-            expect(usernameOfActiveEntry).to.equal('someUsername');
+            entryList.getUsernameOfActiveEntry()
+                    .then(usernameOfActiveEntry => {
+                        expect(usernameOfActiveEntry).to.equal('someUsername');
+                    })
+                    .then(done)
+                    .catch(done);
         });
     });
 

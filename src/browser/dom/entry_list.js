@@ -1,9 +1,9 @@
 (function () {
 
     const Mark = require('markup-js');
-    const log = require('loglevel');
     const events = require('events');
 
+    const log = require('../logger');
     require('./event_delegation.js');
 
     const template = `
@@ -20,7 +20,8 @@
             </thead>
             <tbody>
             {{entries}}
-                <tr class="entry{{if #|first}} info{{/if}}" data-UUID="{{UUID}}"
+                <tr class="entry{{if #|first}} info{{/if}}"
+                        data-UUID="{{UUID}}"
                         data-username="{{.|getVal>UserName|blank>}}"
                         data-password="{{.|getPassword|blank>}}">
                     <td>
@@ -81,7 +82,7 @@
 
         getIdOfActiveEntry() {
             return new Promise(resolve => {
-                resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-UUID'));
+                resolve(this.element.getElementsByClassName('info').item(0).getAttribute('data-uuid'));
             });
         }
 

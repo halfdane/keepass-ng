@@ -2,7 +2,8 @@
     const fs = require('fs');
     const path = require('path');
 
-    const log = require('loglevel');
+
+    const log = require('../../logger');
     const Mark = require('markup-js');
 
     function remember() {
