@@ -2,4 +2,6 @@
 .dejavurc
 node_modules
 .tmp
+build
 dist
+out

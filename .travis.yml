@@ -1,23 +1,34 @@
 language: node_js
 node_js:
-  - "5.1"
-
+- '5.1'
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -y libcrypto++-dev
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- sleep 3
 script: npm run travis-ci
-
 env:
+  matrix:
   - CXX=g++-4.8
+  global:
+    secure: Hizvq3CAkZ47PeFpVimCyulYaWww/nDJF8IGQ2AsUrcaro+oaM7Vk7K4F7hZmi9K6ZYoq20WTiZ5Y/TpQCyzRII/ZkIg6xx/X+X3uxVTAs996TQJedeWFBr83hrJ39o+7itDPUAbOBmmJpKwmJfCnr2l5apSvQE9DjJd0cc7EN0wgHyTDEb0UThYHeW3shjlcFulB9kzGzJhKQHyS+HHMGTiQ8QDBoUZmqU2dvplKJRvlHlf6gp0FxkK2J6Yre88q9ahbc6Ivz68/dCbVuoPcs8hmn/SDSCgEvN7JMhi89S6m+XytEVCAQUr+HsPtndQtGNlayXyIACLhee50EbtX751UACdCtRpm0SVTvl18XxKPV2RUgiWyWHn1ScIPONu9CWgkZo2nfnUcN8UQBwDO0WEfTxMagbH2QBsv4buo4K577Y04ysq4pZ3S+Psif4ljk3fG+3VL0cge/6l4MTLRigRXebCuRiTeEE5XI+Vn4wsk0pLBjUZxfFDKiKGxqd2OHjlqjT4Ctw+D0tgad2U8R4ZmTo1Ku1QdwIbirczlJ5JrF4fJ3A1+QVzhl+WDnTekc7+WaeS3zAMEhfqqn8Qv9WjB6vhMaxVCVR2zsZNb2NO4+Peg3VtVOtxZWz5L1Ayk5et9deyRpqCp0PpZD+QgnJgUdaAFJECEavXrUzPqSY=
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
-
+    - g++-4.8
 cache:
   directories:
-    - node_modules
+  - node_modules
+  - "$HOME/.electron"
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file:
+  - out/*.zip
+  skip_cleanup: true
+  on:
+    tags: true
