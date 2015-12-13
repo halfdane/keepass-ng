@@ -1,6 +1,6 @@
 {
   "name": "keepass-ng",
-  "version": "0.1.1-alpha",
+  "version": "0.1.1-alpha-2",
   "description": "The next generation KeePass",
   "main": "dist/app/index.js",
   "scripts": {
