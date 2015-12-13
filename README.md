@@ -1,4 +1,9 @@
-# Keepass-NG ![Build Status Images](https://travis-ci.org/halfdane/keepass-ng.svg)
+# Keepass-NG ![Build Status Images]
+
+
+[![License](http://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/halfdane/keepass-ng/blob/master/LICENSE.md)
+[![Build Status](http://img.shields.io/travis/halfdane/keepass-ng.svg)](http://travis-ci.org/halfdane/keepass-ng)
+[![Github All Releases](https://img.shields.io/github/downloads/halfdane/keepass-ng/total.svg)]()
 
 Keepass-NG is currently in alpha and should not be used for serious work.
 Missing functions are tracked as issues.
