@@ -57,7 +57,7 @@ export default class GroupTree extends events.EventEmitter {
     }
 
     show(groups) {
-        console.log('Got groups. Showing them');
+        log.debug('Got groups. Showing them');
         this.element.innerHTML = Mark.up('{{groupTree}}', {Group: groups, toplevel: true});
         for (let item of this.element.querySelectorAll('[data-toggle="collapse"]')) {
             new Collapse(item);
