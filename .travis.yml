@@ -27,7 +27,10 @@ before_deploy: npm run package
 deploy:
   provider: releases
   api_key: $GH_TOKEN
-  file: out/*.zip
+  file:
+  - out/Keepass-NG-darwin-x64.zip
+  - out/Keepass-NG-linux-x64.zip
+  - out/Keepass-NG-win32-x64.zip
   skip_cleanup: true
   on:
     tags: true
