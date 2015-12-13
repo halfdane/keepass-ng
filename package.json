@@ -2,21 +2,21 @@
   "name": "keepass-ng",
   "version": "0.1.1-alpha-2",
   "description": "The next generation KeePass",
-  "main": "dist/app/index.js",
+  "main": "app/index.js",
   "scripts": {
     "build": "babel -d build/ src/ --source-maps trnpm_package_dependenciesue --copy-files",
     "prestart": "npm run build",
-    "start": "electron .",
+    "start": "electron dist/app/index.js",
     "test": "electron build/spec/index.js",
     "pretest": "npm run hint",
     "hint": "jshint --reporter=node_modules/jshint-stylish --config .jshintrc src/**/*.js",
     "watch:develop": "parallelshell 'npm run build -- -w' 'npm run test -- -w' 'npm run livereload' ",
     "livereload": "live-reload --port 9091 build/",
     "travis-ci": "npm run build && npm run test",
-    "dist": "rm -rf dist && cp -R build/ dist && rm -rf dist/spec && cp -r node_modules dist",
+    "dist": "rm -rf dist && cp -R build/ dist && rm -rf dist/spec && cp -r node_modules dist && cp package.json dist",
     "prepackage": "npm run dist && cd dist && npm prune --production",
     "package": "rm -rf out && electron-packager dist Keepass-NG --platform=all --arch=x64 --version=0.35.4 --out=out --asar",
-    "postpackage": "cd out; for i in *; do zip -dd -rmT $i.zip $i; done"
+    "postpackage": "cd out; for i in *; do zip -dd -rT $i.zip $i; done"
   },
   "dependencies": {
     "crypto-js": "^3.1.5",

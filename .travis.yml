@@ -23,16 +23,11 @@ cache:
   directories:
   - node_modules
   - "$HOME/.electron"
-before_deploy:
-  - npm run package
-  - test -e out && ls out
+before_deploy: npm run package
 deploy:
   provider: releases
   api_key: $GH_TOKEN
-  file:
-  - out/Keepass-NG-darwin-x64.zip
-  - out/Keepass-NG-linux-x64.zip
-  - out/Keepass-NG-win32-x64.zip
+  file: out/*.zip
   skip_cleanup: true
   on:
     tags: true
