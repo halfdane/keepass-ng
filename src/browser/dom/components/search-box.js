@@ -1,10 +1,10 @@
 (function () {
 
-    const log = require('./logger');
+    const log = require('../../logger');
     const fs = require('fs');
     const path = require('path');
 
-    const autoComplete = require('./lib/pixabay-autoComplete/auto-complete.js');
+    const autoComplete = require('../../lib/pixabay-autoComplete/auto-complete.js');
 
     const template = `
     <link href="lib/pixabay-autoComplete/auto-complete.css" rel="stylesheet">
@@ -12,6 +12,9 @@
         <input class="form-control" type="text" placeholder="Search an entry" tabindex="-1"/>
     </form>
     `;
+
+    document.body
+            .insertAdjacentHTML('afterbegin', '<halfdane-searchbox id="search-entries" tabindex="-1"></halfdane-searchbox>');
 
     class SearchBox extends HTMLElement {
 

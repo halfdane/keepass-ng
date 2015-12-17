@@ -27,7 +27,9 @@
                             <input type="password" class="form-control password" id="access_database-password"
                                    placeholder="Password"
                                    value="password" aria-describedby="{{errors.password|choose>inputError2Status>}}">
-                            <span class="input-group-addon" id="access_database-show-password" role="button"></span>
+                            <span class="input-group-addon js_show" id="access_database-show-password">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </span>
                         </div>
 
                         {{if errors.password}}

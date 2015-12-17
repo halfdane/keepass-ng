@@ -27,22 +27,18 @@
 }
 
 .nav .nav {
-    margin-left: 17px;
-}
-
-.group .icon {
-    margin: 2px 2px;
+    margin-left: 24px;
 }
 
 .collapse-toggle:before {
     color: grey;
     /* symbol for "opening" panels */
-    content: "\e080"; /* essential for enabling glyphicon */
+    content: "\e081"; /* essential for enabling glyphicon */
     float: left;
-    font-family: 'Glyphicons Halflings'; /* adjust as needed */
-    padding-right: 3px; /* adjust as needed */
+    font-family: 'Glyphicons Halflings';
+    padding-right: 10px;
 }
 
 .collapse-toggle.collapsed:before {
-    content: "\e114";
+    content: "\e082";
 }

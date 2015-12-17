@@ -1,5 +1,7 @@
 const log = require('../logger');
 
+require('./components/search-box');
+
 import GroupTree  from './group_tree';
 import EntryList from './entry_list';
 
