@@ -71,7 +71,7 @@
                         }
                         entriesToGroupId.get(groupId).push(entry);
                     }
-                    console.log('Checked the database, ready to move on');
+                    log.debug('Checked the database, ready to move on');
                     resolve({database: database, entriesToGroupId: entriesToGroupId});
                 });
             }

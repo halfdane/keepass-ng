@@ -59,7 +59,12 @@ window.onload = function () {
         mocha.run((failureCount) => {
             ipc.send('mocha-done', failureCount);
         });
-
     });
 };
 
+(function () {
+    const TESTFILE = './test.json';
+    beforeEach(()=> {
+        require('../browser/settings').toLocation(TESTFILE);
+    });
+})();

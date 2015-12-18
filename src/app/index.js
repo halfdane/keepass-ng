@@ -9,19 +9,11 @@ var mainWindow = null;
 
 electron.crashReporter.start();
 
-application.createBrowserWindow = (windowOptions) => {
-    return new BrowserWindow(windowOptions);
-};
-
-application.openWindow = () => {
-    mainWindow = application.createBrowserWindow({width: 1024, height: 768});
-    mainWindow.loadURL('file://' + __dirname + '/../browser/index.html');
-
-    mainWindow.webContents.openDevTools();
-
-    mainWindow.on('closed', function () {
-        mainWindow = null;
-    });
+application.createBrowserWindow = (url, windowOptions) => {
+    let window = new BrowserWindow(windowOptions);
+    window.loadURL(url);
+    window.webContents.openDevTools();
+    return window;
 };
 
 app.on('window-all-closed', () => {
@@ -31,9 +23,12 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
-    application.openWindow();
+    mainWindow = application.createBrowserWindow(
+            'file://' + __dirname + '/../browser/index.html',
+            {width: 1024, height: 768});
+    mainWindow.on('closed', () =>  mainWindow = null);
+
     globalShortcut.register('Control+Super+J', () => {
-        mainWindow.show();
         mainWindow.webContents.send('search-and-activate-entry');
     });
     globalShortcut.register('Control+Super+K', () => {
